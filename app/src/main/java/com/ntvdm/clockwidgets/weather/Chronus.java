@@ -52,7 +52,7 @@ final class Chronus {
         boolean hasData = configured && p.contains(WeatherWidgetProvider.KEY_TEMP);
         if (hasData) {
             int code = PirateWeather.yahooCode(p.getString(WeatherWidgetProvider.KEY_ICON, null));
-            rv.setImageViewResource(R.id.widget_weather_icon, icon(context, code));
+            rv.setImageViewResource(R.id.widget_weather_icon, icon(context, code, altIcons(p)));
             rv.setTextViewText(R.id.widget_weather_place, p.getString(WeatherWidgetProvider.KEY_NAME, ""));
             rv.setTextViewText(R.id.chronus_condition, p.getString(WeatherWidgetProvider.KEY_SUMMARY, ""));
 
@@ -72,7 +72,7 @@ final class Chronus {
             rv.setViewVisibility(R.id.chronus_temps_panel, View.VISIBLE);
         } else {
             // Chronus' setNoWeatherData()
-            rv.setImageViewResource(R.id.widget_weather_icon, R.drawable.chronus_weather_na);
+            rv.setImageViewResource(R.id.widget_weather_icon, icon(context, -1, altIcons(p)));
             rv.setTextViewText(R.id.widget_weather_place, context.getString(R.string.chronus_no_data));
             rv.setTextViewText(R.id.chronus_condition, context.getString(
                     configured ? R.string.chronus_tap_to_refresh : R.string.chronus_tap_to_setup));
@@ -86,10 +86,19 @@ final class Chronus {
         return Float.isNaN(v) ? "--°" : Math.round(v) + "°";
     }
 
-    private static int icon(Context context, int code) {
-        int id = code < 0 ? 0 : context.getResources().getIdentifier("chronus_weather_" + code, "drawable",
+    /** Chronus' "Use alternate icons" setting: colour weather2_ set instead of the white weather_ set. */
+    static boolean altIcons(SharedPreferences p) {
+        return p.getBoolean(WeatherWidgetProvider.KEY_CHRONUS_ALT_ICONS, false);
+    }
+
+    private static int icon(Context context, int code, boolean alt) {
+        String prefix = alt ? "chronus_weather2_" : "chronus_weather_";
+        int id = code < 0 ? 0 : context.getResources().getIdentifier(prefix + code, "drawable",
                 context.getPackageName());
-        return id != 0 ? id : R.drawable.chronus_weather_na;
+        if (id != 0) {
+            return id;
+        }
+        return alt ? R.drawable.chronus_weather2_na : R.drawable.chronus_weather_na;
     }
 
     private static float scaleRatio(Context context, Bundle opts) {

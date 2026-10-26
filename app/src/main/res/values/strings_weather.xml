@@ -45,4 +45,5 @@ AVAILABLE"</string>
     <string name="chronus_tap_to_setup">Tap to set up</string>
     <string name="chronus_tap_to_refresh">Tap to refresh</string>
     <string name="chronus_just_now">Just now</string>
+    <string name="weather_chronus_alt_icons">Chronus: use colour weather icons</string>
 </resources>

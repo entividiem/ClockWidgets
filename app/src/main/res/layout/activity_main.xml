@@ -202,6 +202,13 @@
                     android:text="@string/fahrenheit" />
             </RadioGroup>
 
+            <!-- Chronus: "Use alternate icons" (hidden below 4.2, where Chronus isn't available) -->
+            <CheckBox
+                android:id="@+id/weather_chronus_alt_icons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_chronus_alt_icons" />
+
             <TextView
                 android:id="@+id/weather_location"
                 android:layout_width="match_parent"

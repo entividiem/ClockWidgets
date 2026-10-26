@@ -17,6 +17,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -112,6 +114,21 @@ public class WeatherSetup {
                 refreshWidgets();
             }
         });
+
+        // Chronus: colour (alternate) icon set. Only a look change, so redraw from cache.
+        CheckBox altIcons = (CheckBox) activity.findViewById(R.id.weather_chronus_alt_icons);
+        if (activity.getResources().getBoolean(R.bool.chronus_enabled)) {
+            altIcons.setChecked(prefs.getBoolean(WeatherWidgetProvider.KEY_CHRONUS_ALT_ICONS, false));
+            altIcons.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton button, boolean checked) {
+                    prefs.edit().putBoolean(WeatherWidgetProvider.KEY_CHRONUS_ALT_ICONS, checked).commit();
+                    WeatherWidgetProvider.redrawAll(activity);
+                }
+            });
+        } else {
+            altIcons.setVisibility(View.GONE);
+        }
 
         activity.findViewById(R.id.weather_use_location).setOnClickListener(new View.OnClickListener() {
             @Override

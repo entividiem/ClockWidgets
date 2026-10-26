@@ -53,6 +53,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final String KEY_LON = "lon";
     static final String KEY_NAME = "name";
     static final String KEY_FAHRENHEIT = "fahrenheit";
+    static final String KEY_CHRONUS_ALT_ICONS = "chronus_alt_icons";
     // last fetched weather
     static final String KEY_TEMP = "temp";
     static final String KEY_LOW = "low";
@@ -98,6 +99,14 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     static boolean isConfigured(SharedPreferences p) {
         return p.getString(KEY_MODE, null) != null;
+    }
+
+    /** Redraw every weather widget from cached data (no network), e.g. after a look-only setting. */
+    static void redrawAll(Context context) {
+        AppWidgetManager awm = AppWidgetManager.getInstance(context);
+        for (int id : allIds(context)) {
+            render(context, awm, id);
+        }
     }
 
     /** Re-fetch weather and redraw every weather widget. */
