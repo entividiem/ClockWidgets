@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
@@ -54,6 +55,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final String KEY_FAHRENHEIT = "fahrenheit";
     // last fetched weather
     static final String KEY_TEMP = "temp";
+    static final String KEY_LOW = "low";
+    static final String KEY_HIGH = "high";
     static final String KEY_ICON = "icon";
     static final String KEY_SUMMARY = "summary";
     static final String KEY_UPDATED = "updated";
@@ -65,6 +68,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final int STYLE_CLEAN = 1;
     static final int STYLE_S4 = 2;
     static final int STYLE_S3 = 3;
+    static final int STYLE_CHRONUS = 4;
+
+    static final String ACTION_NEXT_ALARM_CHANGED = "android.app.action.NEXT_ALARM_CLOCK_CHANGED"; // 5.0+
+    static final String ACTION_ALARM_CHANGED_LEGACY = "android.intent.action.ALARM_CHANGED";
 
     /** Re-geocode in GPS mode only if we moved more than this. */
     private static final float GPS_MOVE_THRESHOLD_M = 1000f;
@@ -124,12 +131,27 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             return;
         }
 
+        if (ACTION_NEXT_ALARM_CHANGED.equals(action) || ACTION_ALARM_CHANGED_LEGACY.equals(action)) {
+            // Chronus shows the next alarm next to the date
+            AppWidgetManager awm = AppWidgetManager.getInstance(context);
+            for (int id : idsOf(context, ChronusWidgetProvider.class)) {
+                render(context, awm, id);
+            }
+            return;
+        }
+
         super.onReceive(context, intent);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         refreshAsync(context, appWidgetIds);
+    }
+
+    /** Resized (4.1+): Chronus scales its clock and hides the weather panel when too small. */
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager awm, int id, Bundle newOptions) {
+        render(context, awm, id);
     }
 
     @Override
@@ -143,7 +165,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     static int[] allIds(Context context) {
         return concat(idsOf(context, WeatherWidgetProvider.class), idsOf(context, CleanWidgetProvider.class),
-                idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class));
+                idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
+                idsOf(context, ChronusWidgetProvider.class));
     }
 
     private static int[] idsOf(Context context, Class<?> cls) {
@@ -168,6 +191,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (CleanWidgetProvider.class.getName().equals(cls)) return STYLE_CLEAN;
         if (S4WidgetProvider.class.getName().equals(cls)) return STYLE_S4;
         if (S3WidgetProvider.class.getName().equals(cls)) return STYLE_S3;
+        if (ChronusWidgetProvider.class.getName().equals(cls)) return STYLE_CHRONUS;
         return STYLE_HTC;
     }
 
@@ -281,6 +305,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 .putString(KEY_LON, Double.toString(lon))
                 .putString(KEY_NAME, name)
                 .putFloat(KEY_TEMP, (float) c.temperature)
+                .putFloat(KEY_LOW, (float) c.low)
+                .putFloat(KEY_HIGH, (float) c.high)
                 .putString(KEY_ICON, c.icon)
                 .putString(KEY_SUMMARY, c.summary)
                 .putLong(KEY_UPDATED, System.currentTimeMillis())
@@ -297,7 +323,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         boolean hasData = configured && p.contains(KEY_TEMP);
 
         RemoteViews rv;
-        if (style == STYLE_S4 || style == STYLE_S3) {
+        if (style == STYLE_CHRONUS) {
+            rv = Chronus.render(context, awm, id, p);
+        } else if (style == STYLE_S4 || style == STYLE_S3) {
             boolean s3 = style == STYLE_S3;
             rv = new RemoteViews(context.getPackageName(), s3 ? R.layout.weather_widget_s3 : R.layout.weather_widget_s4);
             renderTouchWiz(context, p, rv, s3, configured, hasData);

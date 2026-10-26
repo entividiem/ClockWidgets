@@ -8,6 +8,7 @@ Four weather clock widgets powered by [Pirate Weather](https://pirateweather.net
 - **Weather Clock (Clean)** – transparent 4x1
 - **Weather Clock (Galaxy S3)** – TouchWiz Nature UX 4x2 with weather photo backgrounds
 - **Weather Clock (Galaxy S4)** – TouchWiz 4x2 with weather photo backgrounds
+- **Weather Clock (Chronus)** – CyanogenMod 10 lock clock (JB digital clock + weather panel), Android 4.2+
 
 Set them up in the app's main screen ("Weather Clocks" section): API key, °C/°F and location (current location or
 city search via Open-Meteo geocoding). The settings are shared by all weather widgets. On a widget, tap the place name

@@ -23,11 +23,12 @@ AVAILABLE"</string>
     <string name="widget_clean_name">Weather Clock (Clean)</string>
     <string name="widget_htc_name">Weather Clock (HTC)</string>
     <string name="widget_s3_name">Weather Clock (Galaxy S3)</string>
+    <string name="widget_chronus_name">Weather Clock (Chronus)</string>
     <string name="widget_s4_name">Weather Clock (Galaxy S4)</string>
 
     <!-- setup section on the main screen -->
     <string name="weather_section_title">Weather Clocks</string>
-    <string name="weather_section_help">HTC, Clean, Galaxy S3 and Galaxy S4 weather clocks are in your widget picker as "Weather Clock (…)". All of them use the settings below. On a widget, tap the place name to come back here, tap the weather to refresh.</string>
+    <string name="weather_section_help">HTC, Clean, Galaxy S3, Galaxy S4 and Chronus (4.2+) weather clocks are in your widget picker as "Weather Clock (…)". All of them use the settings below. On a widget, tap the place name to come back here, tap the weather to refresh.</string>
     <string name="use_my_location">Use my current location</string>
     <string name="search_hint">…or search a city</string>
     <string name="api_key_missing">Enter your Pirate Weather API key above to get weather.</string>
@@ -38,4 +39,10 @@ AVAILABLE"</string>
     <string name="weather_refresh">Refresh weather now</string>
     <string name="weather_updating">Saved – updating your weather widgets…</string>
     <string name="weather_saved_no_widgets">Saved. Add a Weather Clock widget to your home screen to see it.</string>
+
+    <!-- Chronus -->
+    <string name="chronus_no_data">No data</string>
+    <string name="chronus_tap_to_setup">Tap to set up</string>
+    <string name="chronus_tap_to_refresh">Tap to refresh</string>
+    <string name="chronus_just_now">Just now</string>
 </resources>

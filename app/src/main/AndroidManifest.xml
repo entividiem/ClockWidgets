@@ -91,6 +91,19 @@
                 android:resource="@xml/weather_widget_info_s3" />
         </receiver>
 
+        <!-- CyanogenMod "Chronus" lock clock. TextClock -> only enabled on 4.2+ -->
+        <receiver android:name=".weather.ChronusWidgetProvider" android:label="@string/widget_chronus_name"
+            android:enabled="@bool/chronus_enabled" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.app.action.NEXT_ALARM_CLOCK_CHANGED" />
+                <action android:name="android.intent.action.ALARM_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_chronus" />
+        </receiver>
+
         <!-- serves the pre-baked rounded/shadowed S3 backgrounds to the launcher -->
         <provider
             android:name=".weather.BackgroundProvider"

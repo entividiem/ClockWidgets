@@ -2,6 +2,7 @@ package com.ntvdm.clockwidgets.weather;
 
 import com.ntvdm.clockwidgets.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +20,9 @@ final class PirateWeather {
 
     static final class Current {
         double temperature;
+        /** today's min / max (NaN if Pirate Weather didn't send a daily block) */
+        double low = Double.NaN;
+        double high = Double.NaN;
         String icon;
         String summary;
         String timezone;
@@ -28,7 +32,7 @@ final class PirateWeather {
             throws IOException, JSONException {
         String path = "/forecast/" + apiKey + "/"
                 + String.format(Locale.US, "%.4f,%.4f", lat, lon)
-                + "?exclude=minutely,hourly,daily,alerts,flags"
+                + "?exclude=minutely,hourly,alerts,flags"
                 + "&units=" + (fahrenheit ? "us" : "si")
                 + "&version=2&icon=pirate";
         JSONObject root = new JSONObject(Net.get("api.pirateweather.net", path));
@@ -39,6 +43,14 @@ final class PirateWeather {
         c.icon = now.optString("icon", "cloudy");
         c.timezone = root.optString("timezone", "");
         c.summary = now.optString("summary", "");
+
+        JSONObject daily = root.optJSONObject("daily");
+        JSONArray days = daily == null ? null : daily.optJSONArray("data");
+        if (days != null && days.length() > 0) {
+            JSONObject today = days.getJSONObject(0);
+            c.low = today.optDouble("temperatureMin", Double.NaN);
+            c.high = today.optDouble("temperatureMax", Double.NaN);
+        }
         return c;
     }
 
@@ -123,6 +135,48 @@ final class PirateWeather {
             default: // 6-10, 27, 28
                 return R.drawable.weather_06_07_08;
         }
+    }
+
+    /**
+     * Pirate Weather icon -> Yahoo! Weather condition code (0-47), used by the Chronus
+     * (CyanogenMod lock clock) icon set. -1 = not available.
+     */
+    static int yahooCode(String icon) {
+        if (icon == null) {
+            return -1;
+        }
+        boolean night = icon.endsWith("-night");
+        String b = icon.replace("-day", "").replace("-night", "");
+
+        if (b.equals("clear")) return night ? 31 : 32;
+        if (b.equals("mostly-clear")) return night ? 33 : 34;
+        if (b.equals("partly-cloudy")) return night ? 29 : 30;
+        if (b.equals("mostly-cloudy")) return night ? 27 : 28;
+        if (b.equals("cloudy")) return 26;
+        if (b.equals("fog") || b.equals("mist")) return 20;
+        if (b.equals("haze")) return 21;
+        if (b.equals("smoke")) return 22;
+        if (b.equals("dangerous-wind")) return 23;
+        if (b.equals("wind") || b.equals("breezy")) return 24;
+        if (b.equals("freezing-drizzle")) return 8;
+        if (b.equals("drizzle")) return 9;
+        if (b.equals("freezing-rain")) return 10;
+        if (b.equals("light-rain")) return 11;
+        if (b.equals("rain") || b.equals("heavy-rain") || b.equals("precipitation")) return 12;
+        if (b.equals("possible-rain") || b.equals("possible-precipitation")) return 40;
+        if (b.equals("flurries")) return 13;
+        if (b.equals("light-snow")) return 14;
+        if (b.equals("snow")) return 16;
+        if (b.equals("heavy-snow")) return 41;
+        if (b.equals("possible-snow")) return 42;
+        if (b.equals("hail")) return 17;
+        if (b.equals("mixed")) return 5;
+        if (b.equals("thunderstorm")) return 4;
+        if (b.equals("possible-thunderstorm")) return 38;
+        if (b.contains("sleet") || b.contains("ice")) return 18;
+        if (b.contains("snow")) return 16;
+        if (b.contains("rain")) return 12;
+        return 26;
     }
 
     /** "Europe/Berlin" -> "Berlin", used when no place name is known. */

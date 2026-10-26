@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="chronus_min_weather_height">120dip</dimen>
+</resources>
