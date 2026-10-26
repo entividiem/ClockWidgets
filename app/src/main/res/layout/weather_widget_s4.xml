@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock widgets (Pirate Weather) - restored from WeatherClockWidget.apk -->
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@+id/tw_bg" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_margin="2.0dip" android:src="@drawable/s4_wth_na" android:scaleType="centerCrop" />
+    <LinearLayout android:orientation="vertical" android:id="@+id/widget_clock_box" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="11.0dip" android:layout_marginTop="10.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true">
+        <ImageView android:id="@+id/tw_time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <TextView android:textSize="16.0sp" android:id="@+id/tw_date" android:layout_marginTop="2.0dip" style="@style/S4Text" />
+    </LinearLayout>
+    <LinearLayout android:gravity="right" android:orientation="vertical" android:id="@+id/widget_weather_box" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dip" android:layout_marginRight="8.0dip" android:layout_marginBottom="6.0dip" android:layout_alignParentRight="true" android:layout_alignParentBottom="true">
+        <LinearLayout android:gravity="bottom" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <LinearLayout android:gravity="right" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="6.0dip" android:layout_marginBottom="2.0dip" android:layout_weight="1.0">
+                <TextView android:textSize="12.5sp" android:ellipsize="end" android:id="@+id/widget_weather_place" style="@style/S4Text" />
+                <TextView android:textSize="16.0sp" android:textStyle="bold" android:ellipsize="end" android:id="@+id/tw_condition" style="@style/S4Text" />
+            </LinearLayout>
+            <TextView android:textSize="37.0sp" android:id="@+id/widget_weather_temp" android:includeFontPadding="false" style="@style/S4Text" />
+        </LinearLayout>
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dip">
+            <TextView android:textSize="11.0sp" android:id="@+id/tw_updated" style="@style/S4Text" />
+            <ImageView android:id="@+id/tw_refresh" android:layout_width="17.0dip" android:layout_height="19.0dip" android:layout_marginLeft="5.0dip" android:src="@drawable/s4_refresh" android:scaleType="fitCenter" />
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView android:id="@+id/widget_weather_icon" android:layout_width="85.0dip" android:layout_height="67.0dip" android:layout_marginRight="6.0dip" android:scaleType="fitCenter" android:layout_above="@+id/widget_weather_box" android:layout_alignParentRight="true" />
+</RelativeLayout>

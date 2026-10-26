@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock (HTC) - pre-4.2 fallback: no TextClock, time is drawn as a bitmap
+     by TimeRenderer and pushed every minute (see values/bools.xml manual_clock).
+     The TextClock version lives in layout-v17. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/widget_panel">
+
+    <ImageView
+        android:id="@+id/widget_time_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="6dip" />
+
+    <LinearLayout
+        android:id="@+id/widget_clock_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="7dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/widget_date_text"
+            style="@style/WidgetSmallText" />
+
+        <include layout="@layout/weather_widget_bottom_place" />
+    </LinearLayout>
+
+    <include layout="@layout/weather_widget_weather_box" />
+</RelativeLayout>

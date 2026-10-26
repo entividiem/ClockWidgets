@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock widgets (Pirate Weather) - restored from WeatherClockWidget.apk -->
+<merge
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:background="#ffffffff" android:layout_width="1.0dip" android:layout_height="13.0dip" android:layout_marginLeft="6.0dip" android:layout_marginRight="6.0dip" />
+    <TextView android:ellipsize="end" android:id="@+id/widget_weather_place" android:text="@string/tap_to_setup" android:layout_weight="1.0" style="@style/WidgetSmallText" />
+    <TextView android:id="@+id/widget_weather_temp" android:visibility="gone" style="@style/WidgetSmallText" />
+</merge>

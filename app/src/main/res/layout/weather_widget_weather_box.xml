@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock widgets (Pirate Weather) - restored from WeatherClockWidget.apk -->
+<FrameLayout android:id="@+id/widget_weather_box" android:layout_width="108.0dip" android:layout_height="64.0dip" android:layout_marginTop="6.0dip" android:layout_marginRight="4.0dip" android:layout_alignParentTop="true" android:layout_alignParentRight="true"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:layout_gravity="center" android:id="@+id/widget_weather_icon" android:visibility="gone" android:layout_width="104.0dip" android:layout_height="61.0dip" android:scaleType="fitCenter" />
+    <TextView android:textSize="12.0sp" android:textStyle="bold" android:textColor="#ffffffff" android:gravity="center" android:layout_gravity="center" android:id="@+id/widget_no_data" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no_weather_data" android:lineSpacingExtra="2.0dip" />
+</FrameLayout>

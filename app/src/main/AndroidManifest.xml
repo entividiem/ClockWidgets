@@ -5,6 +5,11 @@
 
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <!-- Weather Clock widgets -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="26"
@@ -15,6 +20,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Musti">
         <activity android:name=".MainActivity"
             android:theme="@style/Theme.Musti">
@@ -42,6 +48,65 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info_2x2" />
         </receiver>
+
+        <!-- ============ Weather Clock widgets (Pirate Weather) ============ -->
+
+        <!-- HTC Sense style 4x1. Also the shared receiver for refresh / per-minute tick. -->
+        <receiver android:name=".weather.WeatherWidgetProvider" android:label="@string/widget_htc_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_htc" />
+        </receiver>
+
+        <receiver android:name=".weather.CleanWidgetProvider" android:label="@string/widget_clean_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_clean" />
+        </receiver>
+
+        <receiver android:name=".weather.S4WidgetProvider" android:label="@string/widget_s4_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_s4" />
+        </receiver>
+
+        <receiver android:name=".weather.S3WidgetProvider" android:label="@string/widget_s3_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_s3" />
+        </receiver>
+
+        <!-- serves the pre-baked rounded/shadowed S3 backgrounds to the launcher -->
+        <provider
+            android:name=".weather.BackgroundProvider"
+            android:authorities="com.ntvdm.clockwidgets.bg"
+            android:exported="true" />
+
+        <activity
+            android:name=".weather.ConfigActivity"
+            android:label="@string/config_title"
+            android:theme="@style/WeatherConfigTheme"
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
     </application>
 

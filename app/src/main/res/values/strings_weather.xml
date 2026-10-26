@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Weather Clock widgets (Pirate Weather) -->
+    <string name="api_key_help">Get a free key at https://pirateweather.net</string>
+    <string name="api_key_hint">Pirate Weather API key</string>
+    <string name="api_key_missing">Enter your Pirate Weather API key first.</string>
+    <string name="weather_app_name">Weather Clock</string>
+    <string name="celsius">°C</string>
+    <string name="config_title">Weather location</string>
+    <string name="current_location">Current location</string>
+    <string name="fahrenheit">°F</string>
+    <string name="locating">Finding your location…</string>
+    <string name="network_error">Network error: %1$s</string>
+    <string name="no_location">"Couldn't get a location. Turn on location or search a city."</string>
+    <string name="no_results">No places found</string>
+    <string name="no_weather_data">"NO WEATHER
+DATA
+AVAILABLE"</string>
+    <string name="permission_denied">Location permission denied. Search a city instead.</string>
+    <string name="s3_source">PirateWeather.net</string>
+    <string name="search">Search</string>
+    <string name="search_hint">…or search a city</string>
+    <string name="searching">Searching…</string>
+    <string name="tap_to_setup">TAP TO SET UP</string>
+    <string name="tap_to_setup_clean">Tap to set up</string>
+    <string name="use_my_location">Use my current location</string>
+    <string name="widget_clean_name">Weather Clock (Clean)</string>
+    <string name="widget_htc_name">Weather Clock (HTC)</string>
+    <string name="widget_s3_name">Weather Clock (Galaxy S3)</string>
+    <string name="widget_s4_name">Weather Clock (Galaxy S4)</string>
+</resources>
