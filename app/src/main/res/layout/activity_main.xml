@@ -23,14 +23,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Select a Theme:" />
+            android:text="Select a cool theme:" />
 
         <!-- Damn beta -->
         <Button
             android:id="@+id/btn_sooner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="htc-20645 (Android Development" />
+            android:text="htc-20645" />
 
         <!-- 1.0 -->
         <Button
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:text="Android 12 Material" />
 
-        <!-- ===== Weather Clocks setup (shared by all weather widgets, see WeatherSetup.java) ===== -->
+        <!-- ===== Weather Clocks setup) ===== -->
         <LinearLayout
             android:id="@+id/weather_section"
             android:layout_width="match_parent"
