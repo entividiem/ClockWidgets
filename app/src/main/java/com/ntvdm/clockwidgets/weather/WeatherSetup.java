@@ -67,7 +67,7 @@ public class WeatherSetup {
     private Runnable locateTimeout;
     private boolean destroyed;
 
-    public WeatherSetup(Activity activity) {
+    public WeatherSetup(final Activity activity) {
         this.activity = activity;
         this.prefs = WeatherWidgetProvider.prefs(activity);
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
