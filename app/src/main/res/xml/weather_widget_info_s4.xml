@@ -4,7 +4,6 @@
     android:minHeight="110dp"
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/weather_widget_s4"
-    android:configure="com.ntvdm.clockwidgets.weather.ConfigActivity"
     android:resizeMode="horizontal|vertical"
     android:minResizeWidth="180dp"
     android:minResizeHeight="110dp"

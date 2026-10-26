@@ -9,6 +9,7 @@ Four weather clock widgets powered by [Pirate Weather](https://pirateweather.net
 - **Weather Clock (Galaxy S3)** – TouchWiz Nature UX 4x2 with weather photo backgrounds
 - **Weather Clock (Galaxy S4)** – TouchWiz 4x2 with weather photo backgrounds
 
-Placing one opens a setup dialog for the API key, °C/°F and location (current location or city search via Open-Meteo geocoding).
-Tap the place name to change it, tap the weather to refresh. On Android 4.2+ the HTC/Clean clocks use `TextClock`;
+Set them up in the app's main screen ("Weather Clocks" section): API key, °C/°F and location (current location or
+city search via Open-Meteo geocoding). The settings are shared by all weather widgets. On a widget, tap the place name
+to open the setup, tap the weather to refresh. On Android 4.2+ the HTC/Clean clocks use `TextClock`;
 below that the app draws/pushes the time every minute itself. Code lives in `com.ntvdm.clockwidgets.weather`.

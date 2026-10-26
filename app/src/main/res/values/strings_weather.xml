@@ -3,10 +3,8 @@
     <!-- Weather Clock widgets (Pirate Weather) -->
     <string name="api_key_help">Get a free key at https://pirateweather.net</string>
     <string name="api_key_hint">Pirate Weather API key</string>
-    <string name="api_key_missing">Enter your Pirate Weather API key first.</string>
     <string name="weather_app_name">Weather Clock</string>
     <string name="celsius">°C</string>
-    <string name="config_title">Weather location</string>
     <string name="current_location">Current location</string>
     <string name="fahrenheit">°F</string>
     <string name="locating">Finding your location…</string>
@@ -19,13 +17,25 @@ AVAILABLE"</string>
     <string name="permission_denied">Location permission denied. Search a city instead.</string>
     <string name="s3_source">PirateWeather.net</string>
     <string name="search">Search</string>
-    <string name="search_hint">…or search a city</string>
     <string name="searching">Searching…</string>
     <string name="tap_to_setup">TAP TO SET UP</string>
     <string name="tap_to_setup_clean">Tap to set up</string>
-    <string name="use_my_location">Use my current location</string>
     <string name="widget_clean_name">Weather Clock (Clean)</string>
     <string name="widget_htc_name">Weather Clock (HTC)</string>
     <string name="widget_s3_name">Weather Clock (Galaxy S3)</string>
     <string name="widget_s4_name">Weather Clock (Galaxy S4)</string>
+
+    <!-- setup section on the main screen -->
+    <string name="weather_section_title">Weather Clocks</string>
+    <string name="weather_section_help">HTC, Clean, Galaxy S3 and Galaxy S4 weather clocks are in your widget picker as "Weather Clock (…)". All of them use the settings below. On a widget, tap the place name to come back here, tap the weather to refresh.</string>
+    <string name="use_my_location">Use my current location</string>
+    <string name="search_hint">…or search a city</string>
+    <string name="api_key_missing">Enter your Pirate Weather API key above to get weather.</string>
+    <string name="weather_location_label">Location: %1$s</string>
+    <string name="weather_location_none">Location: not set</string>
+    <string name="weather_pick_location">Now pick a location below.</string>
+    <string name="weather_pick_city">Pick a place</string>
+    <string name="weather_refresh">Refresh weather now</string>
+    <string name="weather_updating">Saved – updating your weather widgets…</string>
+    <string name="weather_saved_no_widgets">Saved. Add a Weather Clock widget to your home screen to see it.</string>
 </resources>

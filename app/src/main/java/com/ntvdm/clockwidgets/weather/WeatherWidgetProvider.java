@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.ntvdm.clockwidgets.MainActivity;
 import com.ntvdm.clockwidgets.R;
 
 import java.text.SimpleDateFormat;
@@ -32,8 +33,9 @@ import java.util.Locale;
  * Weather Clock widgets (HTC / Clean / Galaxy S3 / Galaxy S4) backed by Pirate Weather.
  *
  * This class is also the "HTC" widget receiver; the other three styles are empty subclasses
- * so each gets its own entry in the widget picker. All of them share one prefs file, keyed
- * per widget id ("w<id>_<field>"), plus one global Pirate Weather API key.
+ * so each gets its own entry in the widget picker. Settings (API key, units, location) are
+ * set up in the app's main screen ({@link WeatherSetup}) and shared by every weather widget,
+ * so one fetch updates all of them.
  */
 public class WeatherWidgetProvider extends AppWidgetProvider {
 
@@ -43,7 +45,19 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final String ACTION_TICK = "com.ntvdm.clockwidgets.weather.TICK";
 
     static final String PREFS = "WeatherPrefs";
+    // settings
     static final String KEY_API_KEY = "api_key";
+    static final String KEY_MODE = "mode";          // MODE_GPS / MODE_FIXED, unset = not set up
+    static final String KEY_LAT = "lat";
+    static final String KEY_LON = "lon";
+    static final String KEY_NAME = "name";
+    static final String KEY_FAHRENHEIT = "fahrenheit";
+    // last fetched weather
+    static final String KEY_TEMP = "temp";
+    static final String KEY_ICON = "icon";
+    static final String KEY_SUMMARY = "summary";
+    static final String KEY_UPDATED = "updated";
+
     static final String MODE_FIXED = "fixed";
     static final String MODE_GPS = "gps";
 
@@ -52,7 +66,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final int STYLE_S4 = 2;
     static final int STYLE_S3 = 3;
 
-    /** Re-geocode the GPS widget only if we moved more than this. */
+    /** Re-geocode in GPS mode only if we moved more than this. */
     private static final float GPS_MOVE_THRESHOLD_M = 1000f;
 
     private static final String[] CLOCK_PACKAGES = {
@@ -71,21 +85,17 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
     }
 
-    static String key(int widgetId, String field) {
-        return "w" + widgetId + "_" + field;
-    }
-
     static String apiKey(Context context) {
         return prefs(context).getString(KEY_API_KEY, "").trim();
     }
 
-    /** Ask the provider to re-fetch weather. No ids = every weather widget. */
-    static void requestRefresh(Context context, int... ids) {
-        Intent i = new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_REFRESH);
-        if (ids.length > 0) {
-            i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        }
-        context.sendBroadcast(i);
+    static boolean isConfigured(SharedPreferences p) {
+        return p.getString(KEY_MODE, null) != null;
+    }
+
+    /** Re-fetch weather and redraw every weather widget. */
+    public static void requestRefresh(Context context) {
+        context.sendBroadcast(new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_REFRESH));
     }
 
     // ---------------------------------------------------------------- broadcasts
@@ -110,11 +120,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         }
 
         if (ACTION_REFRESH.equals(action)) {
-            int[] ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-            if (ids == null) {
-                ids = allIds(context);
-            }
-            refreshAsync(context, ids);
+            refreshAsync(context, allIds(context));
             return;
         }
 
@@ -127,21 +133,6 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-    public void onDeleted(Context context, int[] appWidgetIds) {
-        SharedPreferences p = prefs(context);
-        SharedPreferences.Editor e = p.edit();
-        for (int id : appWidgetIds) {
-            String prefix = key(id, "");
-            for (String k : p.getAll().keySet()) {
-                if (k.startsWith(prefix)) {
-                    e.remove(k);
-                }
-            }
-        }
-        e.commit();
-    }
-
-    @Override
     public void onDisabled(Context context) {
         if (tickingIds(context).length == 0) {
             ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).cancel(tickIntent(context));
@@ -150,7 +141,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     // ---------------------------------------------------------------- widget id bookkeeping
 
-    private static int[] allIds(Context context) {
+    static int[] allIds(Context context) {
         return concat(idsOf(context, WeatherWidgetProvider.class), idsOf(context, CleanWidgetProvider.class),
                 idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class));
     }
@@ -221,6 +212,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (tickingIds(app).length > 0) {
             scheduleTick(app);
         }
+        if (ids.length == 0) {
+            return;
+        }
 
         // goAsync() is API 11+; on 2.3 the thread just runs in our process
         final BroadcastReceiver.PendingResult pending = Build.VERSION.SDK_INT >= 11 ? goAsync() : null;
@@ -228,12 +222,12 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             @Override
             public void run() {
                 try {
+                    try {
+                        fetch(app);
+                    } catch (Exception e) {
+                        Log.w(TAG, "Weather update failed", e);
+                    }
                     for (int id : ids) {
-                        try {
-                            fetch(app, id);
-                        } catch (Exception e) {
-                            Log.w(TAG, "Weather update failed for widget " + id, e);
-                        }
                         render(app, awm, id);
                     }
                 } finally {
@@ -245,20 +239,18 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         }).start();
     }
 
-    static void fetch(Context context, int id) throws Exception {
+    /** One fetch for all widgets. Blocking - call off the main thread. */
+    static void fetch(Context context) throws Exception {
         SharedPreferences p = prefs(context);
-        String mode = p.getString(key(id, "mode"), null);
-        if (mode == null) {
-            return; // not configured yet
-        }
+        String mode = p.getString(KEY_MODE, null);
         String apiKey = apiKey(context);
-        if (apiKey.length() == 0) {
-            return;
+        if (mode == null || apiKey.length() == 0) {
+            return; // not set up yet
         }
 
-        double lat = Double.parseDouble(p.getString(key(id, "lat"), "0"));
-        double lon = Double.parseDouble(p.getString(key(id, "lon"), "0"));
-        String name = p.getString(key(id, "name"), "");
+        double lat = Double.parseDouble(p.getString(KEY_LAT, "0"));
+        double lon = Double.parseDouble(p.getString(KEY_LON, "0"));
+        String name = p.getString(KEY_NAME, "");
 
         if (MODE_GPS.equals(mode)) {
             Location here = Locator.lastKnown(context);
@@ -279,19 +271,19 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             }
         }
 
-        PirateWeather.Current c = PirateWeather.fetch(apiKey, lat, lon, p.getBoolean(key(id, "fahrenheit"), false));
+        PirateWeather.Current c = PirateWeather.fetch(apiKey, lat, lon, p.getBoolean(KEY_FAHRENHEIT, false));
         if (name.length() == 0) {
             name = PirateWeather.cityFromTimezone(c.timezone);
         }
 
         p.edit()
-                .putString(key(id, "lat"), Double.toString(lat))
-                .putString(key(id, "lon"), Double.toString(lon))
-                .putString(key(id, "name"), name)
-                .putFloat(key(id, "temp"), (float) c.temperature)
-                .putString(key(id, "icon"), c.icon)
-                .putString(key(id, "summary"), c.summary)
-                .putLong(key(id, "updated"), System.currentTimeMillis())
+                .putString(KEY_LAT, Double.toString(lat))
+                .putString(KEY_LON, Double.toString(lon))
+                .putString(KEY_NAME, name)
+                .putFloat(KEY_TEMP, (float) c.temperature)
+                .putString(KEY_ICON, c.icon)
+                .putString(KEY_SUMMARY, c.summary)
+                .putLong(KEY_UPDATED, System.currentTimeMillis())
                 .commit();
     }
 
@@ -301,27 +293,27 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         SharedPreferences p = prefs(context);
         int style = style(awm, id);
         boolean htc = style == STYLE_HTC;
-        boolean configured = p.getString(key(id, "mode"), null) != null;
-        boolean hasData = configured && p.contains(key(id, "temp"));
+        boolean configured = isConfigured(p);
+        boolean hasData = configured && p.contains(KEY_TEMP);
 
         RemoteViews rv;
         if (style == STYLE_S4 || style == STYLE_S3) {
             boolean s3 = style == STYLE_S3;
             rv = new RemoteViews(context.getPackageName(), s3 ? R.layout.weather_widget_s3 : R.layout.weather_widget_s4);
-            renderTouchWiz(context, p, id, rv, s3, configured, hasData);
+            renderTouchWiz(context, p, rv, s3, configured, hasData);
         } else {
             rv = new RemoteViews(context.getPackageName(), htc ? R.layout.weather_widget_htc : R.layout.weather_widget_clean);
-            renderClassic(context, p, id, rv, htc, configured, hasData);
+            renderClassic(context, p, rv, htc, configured, hasData);
         }
         setClicks(context, id, rv, htc, configured);
         awm.updateAppWidget(id, rv);
     }
 
-    private static void renderTouchWiz(Context context, SharedPreferences p, int id, RemoteViews rv,
+    private static void renderTouchWiz(Context context, SharedPreferences p, RemoteViews rv,
                                        boolean s3, boolean configured, boolean hasData) {
         SamsungTheme theme = s3 ? SamsungTheme.S3 : SamsungTheme.S4;
         Date now = new Date();
-        int code = hasData ? PirateWeather.accuCode(p.getString(key(id, "icon"), null)) : 0;
+        int code = hasData ? PirateWeather.accuCode(p.getString(KEY_ICON, null)) : 0;
 
         rv.setImageViewBitmap(R.id.tw_time, theme.renderTime(context,
                 new SimpleDateFormat("HH:mm", Locale.getDefault()).format(now), s3 ? 62f : 52f));
@@ -338,8 +330,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
         if (hasData) {
             rv.setImageViewResource(R.id.widget_weather_icon, theme.icon(context, code));
-            long temp = Math.round(p.getFloat(key(id, "temp"), 0f));
-            String unit = p.getBoolean(key(id, "fahrenheit"), false) ? "°F" : "°C";
+            long temp = Math.round(p.getFloat(KEY_TEMP, 0f));
+            String unit = p.getBoolean(KEY_FAHRENHEIT, false) ? "°F" : "°C";
             if (s3) {
                 rv.setTextViewText(R.id.widget_weather_temp, Long.toString(temp));
                 rv.setTextViewText(R.id.s3_unit_degree, "°");
@@ -347,8 +339,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             } else {
                 rv.setTextViewText(R.id.widget_weather_temp, temp + unit);
             }
-            rv.setTextViewText(R.id.tw_condition, sentenceCase(p.getString(key(id, "summary"), "")));
-            long updated = p.getLong(key(id, "updated"), 0L);
+            rv.setTextViewText(R.id.tw_condition, sentenceCase(p.getString(KEY_SUMMARY, "")));
+            long updated = p.getLong(KEY_UPDATED, 0L);
             rv.setTextViewText(R.id.tw_updated, updated == 0 ? "" :
                     new SimpleDateFormat(s3 ? "dd/MM/yyyy HH:mm" : "dd/MM HH:mm", Locale.getDefault())
                             .format(new Date(updated)));
@@ -363,7 +355,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         }
         rv.setViewVisibility(R.id.widget_weather_icon, hasData ? View.VISIBLE : View.INVISIBLE);
         rv.setTextViewText(R.id.widget_weather_place, configured
-                ? p.getString(key(id, "name"), "")
+                ? p.getString(KEY_NAME, "")
                 : context.getString(R.string.tap_to_setup_clean));
     }
 
@@ -372,7 +364,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         return s.substring(0, 1).toUpperCase(Locale.getDefault()) + s.substring(1).toLowerCase(Locale.getDefault());
     }
 
-    private static void renderClassic(Context context, SharedPreferences p, int id, RemoteViews rv,
+    private static void renderClassic(Context context, SharedPreferences p, RemoteViews rv,
                                       boolean htc, boolean configured, boolean hasData) {
         if (manualClock(context)) {
             // pre-4.2: no TextClock, push time/date ourselves (layout/ vs layout-v17/)
@@ -393,26 +385,26 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (!htc) {
             // Clean
             rv.setTextViewText(R.id.widget_weather_place, configured
-                    ? p.getString(key(id, "name"), "")
+                    ? p.getString(KEY_NAME, "")
                     : context.getString(R.string.tap_to_setup_clean));
             if (hasData) {
-                rv.setTextViewText(R.id.widget_weather_temp, Math.round(p.getFloat(key(id, "temp"), 0f)) + "°");
-                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(key(id, "icon"), null)));
+                rv.setTextViewText(R.id.widget_weather_temp, Math.round(p.getFloat(KEY_TEMP, 0f)) + "°");
+                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(KEY_ICON, null)));
             }
             return;
         }
 
         // HTC
         if (configured) {
-            String place = p.getString(key(id, "name"), "").toUpperCase(Locale.getDefault());
+            String place = p.getString(KEY_NAME, "").toUpperCase(Locale.getDefault());
             if (hasData) {
-                String temp = Math.round(p.getFloat(key(id, "temp"), 0f)) + "°"
-                        + (p.getBoolean(key(id, "fahrenheit"), false) ? "F" : "C");
+                String temp = Math.round(p.getFloat(KEY_TEMP, 0f)) + "°"
+                        + (p.getBoolean(KEY_FAHRENHEIT, false) ? "F" : "C");
                 if (place.length() > 0) {
                     temp = ", " + temp;
                 }
                 rv.setTextViewText(R.id.widget_weather_temp, temp);
-                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(key(id, "icon"), null)));
+                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(KEY_ICON, null)));
             }
             rv.setTextViewText(R.id.widget_weather_place, place);
         } else {
@@ -424,28 +416,25 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     }
 
     private static void setClicks(Context context, int id, RemoteViews rv, boolean htc, boolean configured) {
-        // place name -> location picker
-        Intent cfg = new Intent(context, ConfigActivity.class)
-                .setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE)
-                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent cfgPi = PendingIntent.getActivity(context, id, cfg, PI_FLAGS);
-        rv.setOnClickPendingIntent(R.id.widget_weather_place, cfgPi);
+        // place name -> the app's weather setup
+        Intent setup = new Intent(context, MainActivity.class)
+                .setAction(WeatherSetup.ACTION_SHOW)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent setupPi = PendingIntent.getActivity(context, 0, setup, PI_FLAGS);
+        rv.setOnClickPendingIntent(R.id.widget_weather_place, setupPi);
 
-        // weather box -> refresh (or set up if not configured yet)
+        // weather box -> refresh (or set up if not done yet)
         if (configured) {
-            Intent refresh = new Intent(context, WeatherWidgetProvider.class)
-                    .setAction(ACTION_REFRESH)
-                    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{id});
-            rv.setOnClickPendingIntent(R.id.widget_weather_box, PendingIntent.getBroadcast(context, id, refresh, PI_FLAGS));
+            Intent refresh = new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_REFRESH);
+            rv.setOnClickPendingIntent(R.id.widget_weather_box, PendingIntent.getBroadcast(context, 0, refresh, PI_FLAGS));
         } else {
-            rv.setOnClickPendingIntent(R.id.widget_weather_box, cfgPi);
+            rv.setOnClickPendingIntent(R.id.widget_weather_box, setupPi);
         }
 
         // clock -> alarms / clock app
         Intent clock = clockIntent(context);
         if (clock != null) {
-            PendingIntent clockPi = PendingIntent.getActivity(context, 0, clock.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PI_FLAGS);
+            PendingIntent clockPi = PendingIntent.getActivity(context, 1, clock.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PI_FLAGS);
             rv.setOnClickPendingIntent(R.id.widget_clock_box, clockPi);
             if (htc) {
                 rv.setOnClickPendingIntent(manualClock(context) ? R.id.widget_time_image : R.id.widget_time_text, clockPi);

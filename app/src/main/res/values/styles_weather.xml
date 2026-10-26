@@ -45,7 +45,4 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
     </style>
-
-    <!-- Weather location picker (widget configure activity) -->
-    <style name="WeatherConfigTheme" parent="@android:style/Theme.Dialog" />
 </resources>

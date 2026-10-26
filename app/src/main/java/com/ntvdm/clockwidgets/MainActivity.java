@@ -16,7 +16,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Toast;
+
+import com.ntvdm.clockwidgets.weather.WeatherSetup;
 
 public class MainActivity extends Activity {
 
@@ -186,6 +189,35 @@ public class MainActivity extends Activity {
 
         });
 
+        // Weather Clocks setup section (API key, units, location)
+        weatherSetup = new WeatherSetup(this);
+        weatherSetup.handleIntent(getIntent(), (ScrollView) findViewById(R.id.main_scroll));
+
+    }
+
+    private WeatherSetup weatherSetup;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        weatherSetup.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        weatherSetup.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        weatherSetup.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        weatherSetup.onRequestPermissionsResult(requestCode, grantResults);
     }
 
     private void applyTheme(String themeKey) {
