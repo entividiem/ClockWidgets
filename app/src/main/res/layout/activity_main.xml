@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clock Widget Settings"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Select a cool theme:" />
+
+        <!-- Damn beta -->
+        <Button
+            android:id="@+id/btn_sooner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="htc-20645" />
+
+        <!-- 1.0 -->
+        <Button
+            android:id="@+id/btn_classic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android 1.0" />
+
+        <!-- GB -->
+        <Button
+            android:id="@+id/btn_gingerbread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android Gingerbread" />
+
+        <!-- HC -->
+        <Button
+            android:id="@+id/btn_hc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android Honeycomb" />
+
+        <!-- ICS -->
+        <Button
+            android:id="@+id/btn_ics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android Ice Cream Sandwich" />
+
+        <!-- Digital Clock (Oreo+) -->
+        <Button
+            android:id="@+id/btn_digitalics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android ICS Digital" />
+
+        <!-- ICS Beta IRK40C -->
+        <Button
+            android:id="@+id/btn_irk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android ICS Beta IRK40C" />
+
+        <!-- ICS Beta GSM -->
+        <Button
+            android:id="@+id/btn_ics_gsm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android ICS Beta GSMArena build" />
+
+        <!-- JB -->
+        <Button
+            android:id="@+id/btn_jb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android Jelly Bean" />
+
+        <!-- Digital Clock (Oreo+) -->
+        <Button
+            android:id="@+id/btn_digital"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android JB Digital" />
+
+        <!-- Smasnug Modern clock -->
+        <Button
+            android:id="@+id/btn_modern"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Samsung 'modern' clock" />
+
+        <!-- Smasnug FUNKEYYY clock -->
+        <Button
+            android:id="@+id/btn_funky"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Samsung 'funky' clock" />
+
+        <!-- Samsung GB modern or smth -->
+        <Button
+            android:id="@+id/btn_gbsam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Samsung 'modern' clock (GB)" />
+
+        <!-- Samsung GB "Simpel" or smth -->
+        <Button
+            android:id="@+id/btn_gbsam1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Samsung 'clean' clock (GB)" />
+
+
+        <!-- Digital Clock (Oreo+) -->
+        <Button
+            android:id="@+id/btn_digitalkk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android KitKat Digital" />
+
+
+        <!-- Material gurl -->
+        <Button
+            android:id="@+id/btn_material"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Android 12 Material" />
+
+        <!-- ===== Weather Clocks setup) ===== -->
+        <LinearLayout
+            android:id="@+id/weather_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/weather_section_title"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"
+                android:text="@string/weather_section_help"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/weather_api_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/api_key_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true"
+                android:typeface="monospace" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:autoLink="web"
+                android:text="@string/api_key_help"
+                android:textSize="12sp" />
+
+            <RadioGroup
+                android:id="@+id/weather_units"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/weather_unit_c"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/celsius" />
+
+                <RadioButton
+                    android:id="@+id/weather_unit_f"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/fahrenheit" />
+            </RadioGroup>
+
+            <!-- Chronus: "Use alternate icons" (hidden below 4.2, where Chronus isn't available) -->
+            <CheckBox
+                android:id="@+id/weather_chronus_alt_icons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_chronus_alt_icons" />
+
+            <TextView
+                android:id="@+id/weather_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/weather_use_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/use_my_location" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/weather_query"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textCapWords"
+                    android:singleLine="true" />
+
+                <Button
+                    android:id="@+id/weather_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/weather_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/weather_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/weather_refresh" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

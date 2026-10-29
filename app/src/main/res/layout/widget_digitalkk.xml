@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/digital_appwidget"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|top"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <!-- Time Section: Bold Hour and Thin Minute -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:baselineAligned="true"
+        android:orientation="horizontal">
+
+        <!-- Hour -->
+        <TextClock
+            android:id="@+id/the_clock1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:format12Hour="h"
+            android:format24Hour="H"
+            android:textColor="#FFFFFF"
+            android:textSize="80dp" />
+
+        <!-- Minute (and Colon) -->
+        <TextClock
+            android:id="@+id/the_clock2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:format12Hour=":mm"
+            android:format24Hour=":mm"
+            android:textColor="#FFFFFF"
+            android:textSize="80dp" />
+    </LinearLayout>
+
+    <!-- Date and Alarm Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextClock
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:typeface="sans"
+            android:textStyle="bold"
+            android:format12Hour="EEE, MMM d"
+            android:format24Hour="EEE, MMM d"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

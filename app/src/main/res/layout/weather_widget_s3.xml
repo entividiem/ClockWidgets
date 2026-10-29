@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock widgets (Pirate Weather) - restored from WeatherClockWidget.apk -->
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@+id/tw_bg" android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s3_wth_na" android:scaleType="fitXY" />
+    <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:id="@+id/widget_clock_box" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="22.0dip" android:layout_alignParentTop="true" android:layout_centerHorizontal="true">
+        <ImageView android:id="@+id/tw_time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="#fff6f7c9" android:id="@+id/tw_date" style="@style/S3Text" />
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical" android:id="@+id/s3_temp_box" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:layout_marginBottom="8.0dip" android:layout_alignParentLeft="true" android:layout_alignParentBottom="true">
+        <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView android:textSize="42.0sp" android:id="@+id/widget_weather_temp" android:includeFontPadding="false" style="@style/S3Text" />
+            <FrameLayout android:layout_gravity="top" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip">
+                <TextView android:textSize="30.0sp" android:id="@+id/s3_unit_degree" android:layout_marginTop="3.0dip" android:includeFontPadding="false" style="@style/S3Text" />
+                <TextView android:textSize="31.0sp" android:id="@+id/s3_unit" android:layout_marginLeft="5.0dip" android:layout_marginTop="8.0dip" android:includeFontPadding="false" style="@style/S3Text" />
+            </FrameLayout>
+        </LinearLayout>
+        <TextView android:textSize="12.0sp" android:textStyle="bold" android:id="@+id/s3_source" android:layout_marginTop="2.0dip" android:text="@string/s3_source" style="@style/S3Text" />
+    </LinearLayout>
+    <LinearLayout android:gravity="right" android:orientation="vertical" android:id="@+id/widget_weather_box" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="8.0dip" android:layout_toRightOf="@+id/s3_temp_box" android:layout_alignParentRight="true" android:layout_alignParentBottom="true">
+        <TextView android:textSize="14.0sp" android:textStyle="bold" android:ellipsize="end" android:id="@+id/widget_weather_place" style="@style/S3Text" />
+        <TextView android:textSize="14.0sp" android:ellipsize="end" android:id="@+id/tw_condition" style="@style/S3Text" />
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3.0dip">
+            <TextView android:textSize="12.0sp" android:textColor="#ccffffff" android:id="@+id/tw_updated" style="@style/S3Text" />
+            <ImageView android:id="@+id/tw_refresh" android:layout_width="15.0dip" android:layout_height="17.0dip" android:layout_marginLeft="6.0dip" android:src="@drawable/s3_refresh" android:scaleType="fitCenter" />
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView android:id="@+id/widget_weather_icon" android:layout_width="78.0dip" android:layout_height="40.0dip" android:layout_marginRight="8.0dip" android:layout_marginBottom="2.0dip" android:scaleType="fitCenter" android:layout_above="@+id/widget_weather_box" android:layout_alignParentRight="true" />
+</RelativeLayout>

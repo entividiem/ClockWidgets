@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock (Chronus) - styles from com.cyanogenmod.lockclock 1.01 -->
+<resources>
+    <dimen name="chronus_big_font_size">80dip</dimen>
+    <!-- below this widget height the weather panel is hidden (Chronus: min_digital_weather_height) -->
+    <dimen name="chronus_min_weather_height">160dip</dimen>
+    <!-- clock font scales down when the widget is narrower than this -->
+    <dimen name="chronus_def_width">160dip</dimen>
+
+    <style name="ChronusShadow">
+        <item name="android:shadowColor">#dd000000</item>
+        <item name="android:shadowRadius">2.0</item>
+    </style>
+
+    <style name="ChronusLabelBold" parent="@style/ChronusShadow">
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="ChronusBigBold" parent="@style/ChronusShadow">
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">@dimen/chronus_big_font_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="ChronusBigThin" parent="@style/ChronusShadow">
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">@dimen/chronus_big_font_size</item>
+        <item name="android:fontFamily">sans-serif-thin</item>
+    </style>
+</resources>

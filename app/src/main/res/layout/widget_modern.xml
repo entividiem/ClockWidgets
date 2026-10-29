@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnalogClock xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/analog_clock_modern"
+    android:dial="@drawable/modern_dial"
+    android:hand_hour="@drawable/modern_hour"
+    android:hand_minute="@drawable/modern_minute"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />

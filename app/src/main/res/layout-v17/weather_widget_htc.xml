@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock widgets (Pirate Weather) - restored from WeatherClockWidget.apk -->
+<RelativeLayout android:background="@drawable/widget_panel" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextClock android:textSize="72.0sp" android:textColor="#ffffffff" android:id="@+id/widget_time_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dip" android:layout_marginTop="-8.0dip" android:includeFontPadding="false" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:fontFamily="sans-serif-thin" android:format12Hour="HH:mm" android:format24Hour="HH:mm" />
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/widget_clock_box" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="7.0dip" android:layout_alignParentLeft="true" android:layout_alignParentBottom="true">
+        <TextClock android:textStyle="bold" android:id="@+id/widget_date_day" android:format12Hour="dd" android:format24Hour="dd" style="@style/WidgetSmallText" />
+        <TextClock android:id="@+id/widget_date_month" android:format12Hour="/MM" android:format24Hour="/MM" style="@style/WidgetSmallText" />
+        <include layout="@layout/weather_widget_bottom_place" />
+    </LinearLayout>
+    <include layout="@layout/weather_widget_weather_box" />
+</RelativeLayout>

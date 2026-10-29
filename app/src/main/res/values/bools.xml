@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- true below API 17: no TextClock, so the weather widgets draw/push the time themselves
+         every minute. values-v17 flips this to false and layout-v17 uses TextClock. -->
+    <bool name="manual_clock">true</bool>
+    <!-- Weather Clock (Chronus) needs TextClock (4.2+) -->
+    <bool name="chronus_enabled">false</bool>
+</resources>

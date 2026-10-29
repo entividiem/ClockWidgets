@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock (Chronus) - CyanogenMod 10 "Chronus" lock clock (com.cyanogenmod.lockclock 1.01):
+     clock_panel.xml + weather_panel.xml from the original, weather from Pirate Weather.
+     Uses TextClock, so the receiver is only enabled on 4.2+ (values-v17/bools.xml). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chronus_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center|top"
+    android:orientation="vertical">
+
+    <!-- ===== clock panel ===== -->
+    <LinearLayout
+        android:id="@+id/widget_clock_box"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="?android:selectableItemBackground"
+        android:baselineAligned="false"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:baselineAligned="true">
+
+            <!-- bold hour -->
+            <TextClock
+                android:id="@+id/chronus_hour"
+                style="@style/ChronusBigBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
+                android:format12Hour="h"
+                android:format24Hour="kk" />
+
+            <!-- thin minutes -->
+            <TextClock
+                android:id="@+id/chronus_minute"
+                style="@style/ChronusBigThin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
+                android:format12Hour=":mm"
+                android:format24Hour=":mm" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextClock
+                android:id="@+id/chronus_date"
+                style="@style/ChronusLabelBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:format12Hour="EEE, MMMM d"
+                android:format24Hour="EEE, MMMM d" />
+
+            <TextView
+                android:id="@+id/chronus_next_alarm"
+                style="@style/ChronusLabelBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:drawableLeft="@drawable/chronus_ic_alarm_small"
+                android:drawablePadding="2dip"
+                android:gravity="center"
+                android:textColor="#80ffffff"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ===== weather panel ===== -->
+    <RelativeLayout
+        android:id="@+id/widget_weather_box"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/widget_weather_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"
+            android:paddingTop="8dip"
+            android:src="@drawable/chronus_weather_na" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/widget_weather_icon"
+            android:padding="4dip">
+
+            <TextView
+                android:id="@+id/widget_weather_place"
+                style="@style/ChronusShadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:ellipsize="marquee"
+                android:gravity="right"
+                android:singleLine="true"
+                android:textColor="#ffffffff"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/chronus_condition"
+                style="@style/ChronusShadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/widget_weather_place"
+                android:ellipsize="marquee"
+                android:gravity="right"
+                android:singleLine="true"
+                android:textColor="#ffffffff"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/chronus_update_time"
+                style="@style/ChronusShadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/chronus_condition"
+                android:gravity="right"
+                android:textColor="#ffbebebe"
+                android:textSize="8sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/chronus_temps_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/widget_weather_icon">
+
+            <TextView
+                android:id="@+id/widget_weather_temp"
+                style="@style/ChronusShadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/chronus_divider"
+                android:layout_width="44dip"
+                android:layout_height="1dip"
+                android:layout_below="@id/widget_weather_temp"
+                android:background="@android:drawable/divider_horizontal_dark" />
+
+            <TextView
+                android:id="@+id/chronus_low_high"
+                style="@style/ChronusShadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chronus_divider"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="2dip"
+                android:textColor="#ffffffff"
+                android:textSize="12sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

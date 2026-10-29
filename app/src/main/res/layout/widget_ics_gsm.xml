@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnalogClock xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/analog_clock_ics_gsm"
+    android:dial="@drawable/ics_gsm_dial"
+    android:hand_hour="@drawable/ics_gsm_hour"
+    android:hand_minute="@drawable/ics_gsm_minute"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
