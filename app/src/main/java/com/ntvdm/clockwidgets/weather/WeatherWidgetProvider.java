@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Weather Clock widgets (HTC / Clean / Galaxy S3 / Galaxy S4) backed by Pirate Weather.
+ * Weather Clock widgets (HTC / Clean / Galaxy S3 / Galaxy S4 / Chronus) backed by Open-Meteo.
  *
  * This class is also the "HTC" widget receiver; the other three styles are empty subclasses
  * so each gets its own entry in the widget picker. Settings (API key, units, location) are
@@ -47,7 +47,6 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     static final String PREFS = "WeatherPrefs";
     // settings
-    static final String KEY_API_KEY = "api_key";
     static final String KEY_MODE = "mode";          // MODE_GPS / MODE_FIXED, unset = not set up
     static final String KEY_LAT = "lat";
     static final String KEY_LON = "lon";
@@ -91,10 +90,6 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     static SharedPreferences prefs(Context context) {
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-    }
-
-    static String apiKey(Context context) {
-        return prefs(context).getString(KEY_API_KEY, "").trim();
     }
 
     static boolean isConfigured(SharedPreferences p) {
@@ -276,8 +271,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static void fetch(Context context) throws Exception {
         SharedPreferences p = prefs(context);
         String mode = p.getString(KEY_MODE, null);
-        String apiKey = apiKey(context);
-        if (mode == null || apiKey.length() == 0) {
+        if (mode == null) {
             return; // not set up yet
         }
 
@@ -304,9 +298,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             }
         }
 
-        PirateWeather.Current c = PirateWeather.fetch(apiKey, lat, lon, p.getBoolean(KEY_FAHRENHEIT, false));
+        OpenMeteo.Current c = OpenMeteo.fetch(lat, lon, p.getBoolean(KEY_FAHRENHEIT, false));
         if (name.length() == 0) {
-            name = PirateWeather.cityFromTimezone(c.timezone);
+            name = WeatherIcons.cityFromTimezone(c.timezone);
         }
 
         p.edit()
@@ -350,7 +344,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                                        boolean s3, boolean configured, boolean hasData) {
         SamsungTheme theme = s3 ? SamsungTheme.S3 : SamsungTheme.S4;
         Date now = new Date();
-        int code = hasData ? PirateWeather.accuCode(p.getString(KEY_ICON, null)) : 0;
+        int code = hasData ? WeatherIcons.accuCode(p.getString(KEY_ICON, null)) : 0;
 
         rv.setImageViewBitmap(R.id.tw_time, theme.renderTime(context,
                 new SimpleDateFormat("HH:mm", Locale.getDefault()).format(now), s3 ? 62f : 52f));
@@ -426,7 +420,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     : context.getString(R.string.tap_to_setup_clean));
             if (hasData) {
                 rv.setTextViewText(R.id.widget_weather_temp, Math.round(p.getFloat(KEY_TEMP, 0f)) + "°");
-                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(KEY_ICON, null)));
+                rv.setImageViewResource(R.id.widget_weather_icon, WeatherIcons.iconRes(p.getString(KEY_ICON, null)));
             }
             return;
         }
@@ -441,7 +435,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     temp = ", " + temp;
                 }
                 rv.setTextViewText(R.id.widget_weather_temp, temp);
-                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(KEY_ICON, null)));
+                rv.setImageViewResource(R.id.widget_weather_icon, WeatherIcons.iconRes(p.getString(KEY_ICON, null)));
             }
             rv.setTextViewText(R.id.widget_weather_place, place);
         } else {

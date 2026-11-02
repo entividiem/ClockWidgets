@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Weather Clock widgets (Pirate Weather) -->
-    <string name="api_key_help">Get free key at https://pirateweather.net</string>
-    <string name="api_key_hint">Pirate Weather API key</string>
+    <!-- Weather Clock widgets (Open-Meteo) -->
     <string name="weather_app_name">Weather Clock</string>
     <string name="celsius">°C</string>
     <string name="current_location">Current location</string>
@@ -15,7 +13,7 @@
 DATA
 AVAILABLE"</string>
     <string name="permission_denied">Location permission denied. Search a city instead.</string>
-    <string name="s3_source">PirateWeather.net</string>
+    <string name="s3_source">Open-Meteo.com</string>
     <string name="search">Search</string>
     <string name="searching">Searching…</string>
     <string name="tap_to_setup">TAP TO SET UP</string>
@@ -31,7 +29,6 @@ AVAILABLE"</string>
     <string name="weather_section_help">weather clocks are in the widget picker as "Weather Clock"</string>
     <string name="use_my_location">Use my current location</string>
     <string name="search_hint">…or search a city</string>
-    <string name="api_key_missing">Enter your Pirate Weather API key above to get weather.</string>
     <string name="weather_location_label">Location: %1$s</string>
     <string name="weather_location_none">Location: not set</string>
     <string name="weather_pick_location">Now pick a location below.</string>
@@ -46,4 +43,5 @@ AVAILABLE"</string>
     <string name="chronus_tap_to_refresh">Tap to refresh</string>
     <string name="chronus_just_now">Just now</string>
     <string name="weather_chronus_alt_icons">Chronus: use colour weather icons</string>
+    <string name="weather_attribution">Weather data by Open-Meteo.com (CC BY 4.0) – free, no API key needed</string>
 </resources>

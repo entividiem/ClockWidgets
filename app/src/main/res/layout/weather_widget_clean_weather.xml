@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Weather Clock widgets (Pirate Weather) - restored from WeatherClockWidget.apk -->
+<!-- Weather Clock widgets (Open-Meteo) - restored from WeatherClockWidget.apk -->
 <LinearLayout android:gravity="end" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
   xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView android:textSize="13.0sp" android:ellipsize="end" android:id="@+id/widget_weather_place" android:maxWidth="160.0dip" android:text="@string/tap_to_setup_clean" android:singleLine="true" style="@style/CleanDateText" />

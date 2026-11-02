@@ -49,7 +49,7 @@
                 android:resource="@xml/widget_info_2x2" />
         </receiver>
 
-        <!-- ============ Weather Clock widgets (Pirate Weather) ============ -->
+        <!-- ============ Weather Clock widgets (Open-Meteo) ============ -->
 
         <!-- HTC Sense style 4x1. Also the shared receiver for refresh / per-minute tick. -->
         <receiver android:name=".weather.WeatherWidgetProvider" android:label="@string/widget_htc_name" android:exported="true">
