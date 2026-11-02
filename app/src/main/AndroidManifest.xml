@@ -104,6 +104,16 @@
                 android:resource="@xml/weather_widget_info_chronus" />
         </receiver>
 
+        <!-- Galaxy S (TouchWiz 3.0) AccuWeather analog clock, as a normal 4x3 widget -->
+        <receiver android:name=".weather.GalaxySWidgetProvider" android:label="@string/widget_galaxys_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_galaxys" />
+        </receiver>
+
         <!-- serves the pre-baked rounded/shadowed S3 backgrounds to the launcher -->
         <provider
             android:name=".weather.BackgroundProvider"

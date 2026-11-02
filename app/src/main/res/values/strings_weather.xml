@@ -21,6 +21,7 @@ AVAILABLE"</string>
     <string name="widget_clean_name">Weather Clock (Clean)</string>
     <string name="widget_htc_name">Weather Clock (HTC)</string>
     <string name="widget_s3_name">Weather Clock (Galaxy S3)</string>
+    <string name="widget_galaxys_name">Weather Clock (Galaxy S)</string>
     <string name="widget_chronus_name">Weather Clock (Chronus)</string>
     <string name="widget_s4_name">Weather Clock (Galaxy S4)</string>
 
@@ -44,4 +45,6 @@ AVAILABLE"</string>
     <string name="chronus_just_now">Just now</string>
     <string name="weather_chronus_alt_icons">Chronus: use colour weather icons</string>
     <string name="weather_attribution">Weather data by Open-Meteo.com (CC BY 4.0) – free, no API key needed</string>
+    <!-- Galaxy S -->
+    <string name="s1_select_city">Select City</string>
 </resources>

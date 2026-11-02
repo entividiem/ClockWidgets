@@ -69,6 +69,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final int STYLE_S4 = 2;
     static final int STYLE_S3 = 3;
     static final int STYLE_CHRONUS = 4;
+    static final int STYLE_GALAXY_S = 5;
+
+    /** true while a fetch runs (the Galaxy S clock spins its refresh button meanwhile) */
+    static volatile boolean sFetching;
 
     static final String ACTION_NEXT_ALARM_CHANGED = "android.app.action.NEXT_ALARM_CLOCK_CHANGED"; // 5.0+
     static final String ACTION_ALARM_CHANGED_LEGACY = "android.intent.action.ALARM_CHANGED";
@@ -170,7 +174,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static int[] allIds(Context context) {
         return concat(idsOf(context, WeatherWidgetProvider.class), idsOf(context, CleanWidgetProvider.class),
                 idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
-                idsOf(context, ChronusWidgetProvider.class));
+                idsOf(context, ChronusWidgetProvider.class), idsOf(context, GalaxySWidgetProvider.class));
     }
 
     private static int[] idsOf(Context context, Class<?> cls) {
@@ -196,6 +200,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (S4WidgetProvider.class.getName().equals(cls)) return STYLE_S4;
         if (S3WidgetProvider.class.getName().equals(cls)) return STYLE_S3;
         if (ChronusWidgetProvider.class.getName().equals(cls)) return STYLE_CHRONUS;
+        if (GalaxySWidgetProvider.class.getName().equals(cls)) return STYLE_GALAXY_S;
         return STYLE_HTC;
     }
 
@@ -209,7 +214,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (manualClock(context)) {
             return allIds(context);
         }
-        return concat(idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class));
+        // Galaxy S: hands are an AnalogClock, but the day-of-month box needs a nudge too
+        return concat(idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
+                idsOf(context, GalaxySWidgetProvider.class));
     }
 
     private static PendingIntent tickIntent(Context context) {
@@ -233,15 +240,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         final Context app = context.getApplicationContext();
         final AppWidgetManager awm = AppWidgetManager.getInstance(app);
 
-        // draw immediately with cached data, then fetch in the background
-        for (int id : ids) {
-            render(app, awm, id);
-        }
         if (tickingIds(app).length > 0) {
             scheduleTick(app);
         }
         if (ids.length == 0) {
             return;
+        }
+        // draw immediately with cached data, then fetch in the background
+        sFetching = true;
+        for (int id : ids) {
+            render(app, awm, id);
         }
 
         // goAsync() is API 11+; on 2.3 the thread just runs in our process
@@ -255,10 +263,12 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     } catch (Exception e) {
                         Log.w(TAG, "Weather update failed", e);
                     }
+                    sFetching = false;
                     for (int id : ids) {
                         render(app, awm, id);
                     }
                 } finally {
+                    sFetching = false;
                     if (pending != null) {
                         pending.finish();
                     }
@@ -326,7 +336,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         boolean hasData = configured && p.contains(KEY_TEMP);
 
         RemoteViews rv;
-        if (style == STYLE_CHRONUS) {
+        if (style == STYLE_GALAXY_S) {
+            rv = GalaxyS.render(context, p, sFetching);
+        } else if (style == STYLE_CHRONUS) {
             rv = Chronus.render(context, awm, id, p);
         } else if (style == STYLE_S4 || style == STYLE_S3) {
             boolean s3 = style == STYLE_S3;
