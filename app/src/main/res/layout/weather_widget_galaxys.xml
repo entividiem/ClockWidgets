@@ -114,15 +114,13 @@
                     android:layout_marginTop="1dip"
                     android:orientation="horizontal">
 
-                    <!-- left slot that held the DST icon -->
-                    <View
-                        android:layout_width="31.6dip"
-                        android:layout_height="fill_parent" />
-
+                    <!-- marginLeft = the 31.6dp slot that held the DST icon
+                         (a plain <View> spacer isn't allowed in RemoteViews) -->
                     <TextView
                         android:id="@+id/s1_city"
                         android:layout_width="86dip"
                         android:layout_height="fill_parent"
+                        android:layout_marginLeft="31.6dip"
                         android:ellipsize="end"
                         android:gravity="center_vertical|left"
                         android:singleLine="true"
