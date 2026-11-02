@@ -219,6 +219,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 idsOf(context, GalaxySWidgetProvider.class));
     }
 
+    /** After a failed fetch, try again sooner than the 30-minute widget update. */
+    private static final long RETRY_DELAY_MS = 10 * 60 * 1000;
+
+    private static void scheduleRetry(Context context) {
+        Intent i = new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_REFRESH);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 2, i, PI_FLAGS); // one pending retry at most
+        ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE))
+                .set(AlarmManager.RTC, System.currentTimeMillis() + RETRY_DELAY_MS, pi);
+    }
+
     private static PendingIntent tickIntent(Context context) {
         Intent i = new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_TICK);
         return PendingIntent.getBroadcast(context, 0, i, PI_FLAGS);
@@ -262,6 +272,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                         fetch(app);
                     } catch (Exception e) {
                         Log.w(TAG, "Weather update failed", e);
+                        scheduleRetry(app); // e.g. Open-Meteo 503 during a short outage
                     }
                     sFetching = false;
                     for (int id : ids) {
