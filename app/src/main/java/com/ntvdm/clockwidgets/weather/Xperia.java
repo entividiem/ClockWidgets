@@ -36,7 +36,9 @@ import java.util.Random;
  * animate, so this composes the same layers, at the same positions and with the same alpha /
  * rotation formulas, with Sony's animation clock frozen at {@link #T}. Labels are drawn like
  * Sony's uicomponent.Label (centre-pivot, ascent/descent box). Everything works in the
- * original's hdpi pixel space (plate 220x430) and is scaled to the screen density.
+ * original's hdpi pixel space (plate 220x430, landscape 300x330) and is scaled to the screen
+ * density. Both orientations are drawn; layout / layout-land picks one, like Sony's
+ * drawable-land-hdpi / values-land-hdpi did.
  *
  * The finished picture is cached as a PNG in files/framed/ (served by {@link BackgroundProvider})
  * under a name derived from its content, so it is only re-drawn when something on it changes.
@@ -51,10 +53,12 @@ final class Xperia {
     /** Sony's WeatherClock frozen here (ms): cross-fades half way, rain mid-fall. */
     private static final float T = 1571f;
 
-    // plate size and Sony's text sizes (values-port-hdpi/integers.xml), hdpi px
-    private static final float W = 220f, H = 430f;
-    private static final int TEXT_TEMPERATURE = 80, TEXT_LOCATION = 32, TEXT_HEADLINE = 25,
-            TEXT_LARGE = 22, TEXT_SMALL = 16, DEFAULT_FONT_SIZE = 16;
+    // plate size and Sony's text sizes (values-port-hdpi / values-land-hdpi integers.xml), hdpi px.
+    // Set by geometry() for the orientation being drawn; only touched inside synchronized picture().
+    private static float W, H, SKY;
+    private static int TEXT_TEMPERATURE, TEXT_LOCATION;
+    private static boolean LAND;
+    private static final int TEXT_HEADLINE = 25, TEXT_LARGE = 22, TEXT_SMALL = 16, DEFAULT_FONT_SIZE = 16;
     private static final int GREY = 0xff919baa; // -7234646
     /** Room around the plate. The plate PNG already has 48 transparent rows on top for the
      *  sun / moon; Sony's view only adds a few px (scenes poke out <= ~18px and get clipped
@@ -62,6 +66,15 @@ final class Xperia {
     private static final float MX = 8f, MT = 10f;
 
     private Xperia() {
+    }
+
+    private static void geometry(boolean land) {
+        LAND = land;
+        W = land ? 300f : 220f;
+        H = land ? 330f : 430f;
+        SKY = -H * 0.349f; // the scene's centre line
+        TEXT_TEMPERATURE = land ? 60 : 80;
+        TEXT_LOCATION = land ? 30 : 32;
     }
 
     // ================================================================= widget glue
@@ -84,17 +97,9 @@ final class Xperia {
         boolean hasData = configured && p.contains(WeatherWidgetProvider.KEY_TEMP);
 
         String side = !hasData ? "setup" : showingBack(p, id) ? "back" : "front";
-        Uri uri = null;
-        try {
-            uri = picture(context, p, side, configured);
-        } catch (Throwable t) { // OOM on a 2.x phone etc.: keep the widget alive
-            Log.w(TAG, "Xperia render failed", t);
-        }
-        if (uri != null) {
-            rv.setImageViewUri(R.id.xperia_image, uri);
-        } else {
-            rv.setImageViewResource(R.id.xperia_image, R.drawable.xp_plate);
-        }
+        // both orientations: the launcher inflates layout or layout-land and shows one of them
+        setPicture(context, rv, R.id.xperia_image, p, side, configured, false, R.drawable.xp_plate);
+        setPicture(context, rv, R.id.xperia_image_land, p, side, configured, true, R.drawable.xp_land_plate);
 
         PendingIntent pi;
         if (hasData) {
@@ -109,15 +114,33 @@ final class Xperia {
             pi = PendingIntent.getActivity(context, 0, setup, piFlags);
         }
         rv.setOnClickPendingIntent(R.id.xperia_image, pi);
+        rv.setOnClickPendingIntent(R.id.xperia_image_land, pi);
         return rv;
+    }
+
+    private static void setPicture(Context context, RemoteViews rv, int viewId, SharedPreferences p,
+                                   String side, boolean configured, boolean land, int fallback) {
+        Uri uri = null;
+        try {
+            uri = picture(context, p, side, configured, land);
+        } catch (Throwable t) { // OOM on a 2.x phone etc.: keep the widget alive
+            Log.w(TAG, "Xperia render failed", t);
+        }
+        if (uri != null) {
+            rv.setImageViewUri(viewId, uri);
+        } else {
+            rv.setImageViewResource(viewId, fallback);
+        }
     }
 
     // ================================================================= picture cache
 
-    private static Uri picture(Context context, SharedPreferences p, String side, boolean configured) throws Exception {
+    private static synchronized Uri picture(Context context, SharedPreferences p, String side,
+                                            boolean configured, boolean land) throws Exception {
+        geometry(land);
         float f = context.getResources().getDisplayMetrics().density / 1.5f;
         Data d = new Data(context, p);
-        String key = "v3|" + side + "|" + f + "|" + d.key() + "|" + Locale.getDefault();
+        String key = "v4|" + (land ? "L|" : "P|") + side + "|" + f + "|" + d.key() + "|" + Locale.getDefault();
         File dir = FramedBackground.dir(context);
         File file = new File(dir, "xp_" + Integer.toHexString(key.hashCode()) + ".png");
 
@@ -321,7 +344,6 @@ final class Xperia {
         }
     }
 
-    private static final float SKY = -H * 0.349f; // the scene's centre line
 
     private static int cosA(double base, double amp, double speed) {
         return (int) (base + amp * Math.cos(T * speed));
@@ -517,7 +539,11 @@ final class Xperia {
         Bitmap bmp(String name) {
             Bitmap b = cache.get(name);
             if (b == null) {
-                int id = ctx.getResources().getIdentifier("xp_" + name, "drawable", ctx.getPackageName());
+                // landscape: Sony's drawable-land-hdpi copies (plate, divider, rain/snow/frost) first
+                int id = LAND ? ctx.getResources().getIdentifier("xp_land_" + name, "drawable", ctx.getPackageName()) : 0;
+                if (id == 0) {
+                    id = ctx.getResources().getIdentifier("xp_" + name, "drawable", ctx.getPackageName());
+                }
                 BitmapFactory.Options o = new BitmapFactory.Options();
                 o.inScaled = false; // Sony's hdpi pixels, whatever the screen
                 b = BitmapFactory.decodeResource(ctx.getResources(), id, o);

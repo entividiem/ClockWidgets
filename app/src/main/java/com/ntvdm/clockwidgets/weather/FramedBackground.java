@@ -28,7 +28,7 @@ import java.util.Comparator;
 final class FramedBackground {
 
     private static final String DIR = "framed";
-    private static final int MAX_FILES = 8;
+    private static final int MAX_FILES = 16; // Xperia keeps front/back/setup x port/land
 
     private FramedBackground() {
     }
