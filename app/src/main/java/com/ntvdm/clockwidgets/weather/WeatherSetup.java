@@ -309,7 +309,8 @@ public class WeatherSetup {
             }
         };
         try {
-            locationManager.requestSingleUpdate(provider, pendingListener, Looper.getMainLooper());
+            // requestSingleUpdate() is 2.3+; the listener removes itself after the first fix
+            locationManager.requestLocationUpdates(provider, 0, 0f, pendingListener, Looper.getMainLooper());
             handler.postDelayed(locateTimeout, LOCATE_TIMEOUT_MS);
         } catch (SecurityException e) {
             pendingListener = null;

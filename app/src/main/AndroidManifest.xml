@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="5"
         android:targetSdkVersion="26"
         tools:overrideLibrary="android.support.v7.appcompat, android.support.v4, android.support.mediacompat, android.support.graphics.drawable, android.support.fragment, android.support.coreutils, android.support.coreui, android.support.compat, android.arch.lifecycle" />
 

@@ -50,9 +50,7 @@ final class Locator {
 
     /** Reverse-geocode to a city name, or null if no geocoder / no result. */
     static String placeName(Context context, double lat, double lon) {
-        if (!Geocoder.isPresent()) {
-            return null;
-        }
+        // Geocoder.isPresent() is 2.3+: just try it, no backend throws IOException
         try {
             List<Address> list = new Geocoder(context, Locale.getDefault()).getFromLocation(lat, lon, 1);
             if (list == null || list.isEmpty()) {
