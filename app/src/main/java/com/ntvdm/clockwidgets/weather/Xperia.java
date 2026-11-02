@@ -56,8 +56,10 @@ final class Xperia {
     private static final int TEXT_TEMPERATURE = 80, TEXT_LOCATION = 32, TEXT_HEADLINE = 25,
             TEXT_LARGE = 22, TEXT_SMALL = 16, DEFAULT_FONT_SIZE = 16;
     private static final int GREY = 0xff919baa; // -7234646
-    /** room around the plate: Sony's sun rays / moon / clouds rise above its top edge */
-    private static final float MX = 8f, MT = 56f;
+    /** Room around the plate. The plate PNG already has 48 transparent rows on top for the
+     *  sun / moon; Sony's view only adds a few px (scenes poke out <= ~18px and get clipped
+     *  there too). Same margin top and bottom so fitCenter keeps the plate where Sony had it. */
+    private static final float MX = 8f, MT = 10f;
 
     private Xperia() {
     }
@@ -115,13 +117,13 @@ final class Xperia {
     private static Uri picture(Context context, SharedPreferences p, String side, boolean configured) throws Exception {
         float f = context.getResources().getDisplayMetrics().density / 1.5f;
         Data d = new Data(context, p);
-        String key = "v2|" + side + "|" + f + "|" + d.key() + "|" + Locale.getDefault();
+        String key = "v3|" + side + "|" + f + "|" + d.key() + "|" + Locale.getDefault();
         File dir = FramedBackground.dir(context);
         File file = new File(dir, "xp_" + Integer.toHexString(key.hashCode()) + ".png");
 
         if (!file.exists()) {
             Bitmap out = Bitmap.createBitmap(Math.max(1, Math.round((W + 2 * MX) * f)),
-                    Math.max(1, Math.round((H + MT) * f)), Bitmap.Config.ARGB_8888);
+                    Math.max(1, Math.round((H + 2 * MT) * f)), Bitmap.Config.ARGB_8888);
             try {
                 Canvas canvas = new Canvas(out);
                 canvas.scale(f, f);
