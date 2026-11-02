@@ -16,6 +16,9 @@ import java.util.Locale;
  */
 final class OpenMeteo {
 
+    /** today + 3 days (the Xperia widget's forecast side) */
+    static final int DAYS = 4;
+
     private OpenMeteo() {
     }
 
@@ -27,14 +30,18 @@ final class OpenMeteo {
         String icon;
         String summary;
         String timezone;
+        /** daily WMO code / max / min, index 0 = today (Xperia forecast side uses 4 days) */
+        int[] dailyCode = new int[0];
+        double[] dailyMax = new double[0];
+        double[] dailyMin = new double[0];
     }
 
     static Current fetch(double lat, double lon, boolean fahrenheit) throws IOException, JSONException {
         String path = "/v1/forecast"
                 + String.format(Locale.US, "?latitude=%.4f&longitude=%.4f", lat, lon)
                 + "&current=temperature_2m,weather_code,is_day"
-                + "&daily=temperature_2m_max,temperature_2m_min"
-                + "&timezone=auto&forecast_days=1"
+                + "&daily=weather_code,temperature_2m_max,temperature_2m_min"
+                + "&timezone=auto&forecast_days=" + DAYS
                 + (fahrenheit ? "&temperature_unit=fahrenheit" : "");
         JSONObject root = new JSONObject(Net.get("api.open-meteo.com", path));
         JSONObject now = root.getJSONObject("current");
@@ -52,6 +59,19 @@ final class OpenMeteo {
         if (daily != null) {
             c.high = first(daily.optJSONArray("temperature_2m_max"));
             c.low = first(daily.optJSONArray("temperature_2m_min"));
+            JSONArray codes = daily.optJSONArray("weather_code");
+            JSONArray max = daily.optJSONArray("temperature_2m_max");
+            JSONArray min = daily.optJSONArray("temperature_2m_min");
+            int n = codes == null || max == null || min == null
+                    ? 0 : Math.min(codes.length(), Math.min(max.length(), min.length()));
+            c.dailyCode = new int[n];
+            c.dailyMax = new double[n];
+            c.dailyMin = new double[n];
+            for (int i = 0; i < n; i++) {
+                c.dailyCode[i] = codes.optInt(i, 3);
+                c.dailyMax[i] = max.optDouble(i, Double.NaN);
+                c.dailyMin[i] = min.optDouble(i, Double.NaN);
+            }
         }
         return c;
     }

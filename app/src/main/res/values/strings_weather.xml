@@ -21,6 +21,7 @@ AVAILABLE"</string>
     <string name="widget_clean_name">Weather Clock (Clean)</string>
     <string name="widget_htc_name">Weather Clock (HTC)</string>
     <string name="widget_s3_name">Weather Clock (Galaxy S3)</string>
+    <string name="widget_xperia_name">Weather Clock (Xperia)</string>
     <string name="widget_galaxys_name">Weather Clock (Galaxy S)</string>
     <string name="widget_chronus_name">Weather Clock (Chronus)</string>
     <string name="widget_s4_name">Weather Clock (Galaxy S4)</string>

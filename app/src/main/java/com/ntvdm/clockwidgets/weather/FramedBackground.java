@@ -95,7 +95,7 @@ final class FramedBackground {
     }
 
     /** Keep only the newest MAX_FILES baked backgrounds. */
-    private static void trim(Context context, File keep) {
+    static void trim(Context context, File keep) {
         File[] files = dir(context).listFiles();
         if (files == null || files.length <= MAX_FILES) {
             return;

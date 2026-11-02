@@ -57,6 +57,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final String KEY_TEMP = "temp";
     static final String KEY_LOW = "low";
     static final String KEY_HIGH = "high";
+    /** comma lists, index 0 = today: WMO code, max, min (Xperia forecast side) */
+    static final String KEY_DAILY_CODES = "daily_codes";
+    static final String KEY_DAILY_MAX = "daily_max";
+    static final String KEY_DAILY_MIN = "daily_min";
     static final String KEY_ICON = "icon";
     static final String KEY_SUMMARY = "summary";
     static final String KEY_UPDATED = "updated";
@@ -70,6 +74,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final int STYLE_S3 = 3;
     static final int STYLE_CHRONUS = 4;
     static final int STYLE_GALAXY_S = 5;
+    static final int STYLE_XPERIA = 6;
 
     /** true while a fetch runs (the Galaxy S clock spins its refresh button meanwhile) */
     static volatile boolean sFetching;
@@ -139,6 +144,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             return;
         }
 
+        if (Xperia.ACTION_FLIP.equals(action)) {
+            // Xperia: tap flips between the weather side and the 3-day forecast
+            int id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            if (id != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Xperia.flip(prefs(context), id);
+                render(context, AppWidgetManager.getInstance(context), id);
+            }
+            return;
+        }
+
         if (ACTION_NEXT_ALARM_CHANGED.equals(action) || ACTION_ALARM_CHANGED_LEGACY.equals(action)) {
             // Chronus shows the next alarm next to the date
             AppWidgetManager awm = AppWidgetManager.getInstance(context);
@@ -163,6 +178,14 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        SharedPreferences p = prefs(context);
+        for (int id : appWidgetIds) {
+            Xperia.forget(p, id);
+        }
+    }
+
+    @Override
     public void onDisabled(Context context) {
         if (tickingIds(context).length == 0) {
             ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).cancel(tickIntent(context));
@@ -174,7 +197,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static int[] allIds(Context context) {
         return concat(idsOf(context, WeatherWidgetProvider.class), idsOf(context, CleanWidgetProvider.class),
                 idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
-                idsOf(context, ChronusWidgetProvider.class), idsOf(context, GalaxySWidgetProvider.class));
+                idsOf(context, ChronusWidgetProvider.class), idsOf(context, GalaxySWidgetProvider.class),
+                idsOf(context, XperiaWidgetProvider.class));
     }
 
     private static int[] idsOf(Context context, Class<?> cls) {
@@ -201,6 +225,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (S3WidgetProvider.class.getName().equals(cls)) return STYLE_S3;
         if (ChronusWidgetProvider.class.getName().equals(cls)) return STYLE_CHRONUS;
         if (GalaxySWidgetProvider.class.getName().equals(cls)) return STYLE_GALAXY_S;
+        if (XperiaWidgetProvider.class.getName().equals(cls)) return STYLE_XPERIA;
         return STYLE_HTC;
     }
 
@@ -331,10 +356,31 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 .putFloat(KEY_TEMP, (float) c.temperature)
                 .putFloat(KEY_LOW, (float) c.low)
                 .putFloat(KEY_HIGH, (float) c.high)
+                .putString(KEY_DAILY_CODES, join(c.dailyCode))
+                .putString(KEY_DAILY_MAX, join(c.dailyMax))
+                .putString(KEY_DAILY_MIN, join(c.dailyMin))
                 .putString(KEY_ICON, c.icon)
                 .putString(KEY_SUMMARY, c.summary)
                 .putLong(KEY_UPDATED, System.currentTimeMillis())
                 .commit();
+    }
+
+    private static String join(int[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < a.length; i++) {
+            if (i > 0) sb.append(',');
+            sb.append(a[i]);
+        }
+        return sb.toString();
+    }
+
+    private static String join(double[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < a.length; i++) {
+            if (i > 0) sb.append(',');
+            sb.append(Double.isNaN(a[i]) ? "" : Long.toString(Math.round(a[i])));
+        }
+        return sb.toString();
     }
 
     // ---------------------------------------------------------------- rendering
@@ -347,6 +393,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         boolean hasData = configured && p.contains(KEY_TEMP);
 
         RemoteViews rv;
+        if (style == STYLE_XPERIA) {
+            awm.updateAppWidget(id, Xperia.render(context, id, p, PI_FLAGS)); // own click handling
+            return;
+        }
         if (style == STYLE_GALAXY_S) {
             rv = GalaxyS.render(context, p, sFetching);
         } else if (style == STYLE_CHRONUS) {

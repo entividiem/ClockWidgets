@@ -114,6 +114,16 @@
                 android:resource="@xml/weather_widget_info_galaxys" />
         </receiver>
 
+        <!-- Sony Ericsson Xperia (2011) Home weather widget, as a normal 2x3 widget -->
+        <receiver android:name=".weather.XperiaWidgetProvider" android:label="@string/widget_xperia_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_xperia" />
+        </receiver>
+
         <!-- serves the pre-baked rounded/shadowed S3 backgrounds to the launcher -->
         <provider
             android:name=".weather.BackgroundProvider"
