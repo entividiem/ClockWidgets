@@ -63,7 +63,7 @@ final class Xperia {
     /** Room around the plate. The plate PNG already has 48 transparent rows on top for the
      *  sun / moon; Sony's view only adds a few px (scenes poke out <= ~18px and get clipped
      *  there too). Same margin top and bottom so fitCenter keeps the plate where Sony had it. */
-    private static final float MX = 8f, MT = 10f;
+    private static float MX, MT;
 
     private Xperia() {
     }
@@ -75,6 +75,9 @@ final class Xperia {
         SKY = -H * 0.349f; // the scene's centre line
         TEXT_TEMPERATURE = land ? 60 : 80;
         TEXT_LOCATION = land ? 30 : 32;
+        // landscape plate PNG already has 30px on top / 10px around: Sony's 1:1 size, no extra room
+        MX = land ? 0f : 8f;
+        MT = land ? 0f : 10f;
     }
 
     // ================================================================= widget glue
@@ -140,7 +143,7 @@ final class Xperia {
         geometry(land);
         float f = context.getResources().getDisplayMetrics().density / 1.5f;
         Data d = new Data(context, p);
-        String key = "v4|" + (land ? "L|" : "P|") + side + "|" + f + "|" + d.key() + "|" + Locale.getDefault();
+        String key = "v5|" + (land ? "L|" : "P|") + side + "|" + f + "|" + d.key() + "|" + Locale.getDefault();
         File dir = FramedBackground.dir(context);
         File file = new File(dir, "xp_" + Integer.toHexString(key.hashCode()) + ".png");
 
