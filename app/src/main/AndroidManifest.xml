@@ -124,6 +124,34 @@
                 android:resource="@xml/weather_widget_info_xperia" />
         </receiver>
 
+        <!-- LG Optimus (2012) weather widgets: 4x2 / 4x1 clock + weather, 2x2 weather -->
+        <receiver android:name=".weather.Lg4x2WidgetProvider" android:label="@string/widget_lg_4x2_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_lg_4x2" />
+        </receiver>
+
+        <receiver android:name=".weather.Lg4x1WidgetProvider" android:label="@string/widget_lg_4x1_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_lg_4x1" />
+        </receiver>
+
+        <receiver android:name=".weather.Lg2x2WidgetProvider" android:label="@string/widget_lg_2x2_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_lg_2x2" />
+        </receiver>
+
         <!-- serves the pre-baked rounded/shadowed S3 backgrounds to the launcher -->
         <provider
             android:name=".weather.BackgroundProvider"

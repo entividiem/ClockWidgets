@@ -48,4 +48,7 @@ AVAILABLE"</string>
     <string name="weather_attribution">Weather data by Open-Meteo.com (CC BY 4.0) – free, no API key needed</string>
     <!-- Galaxy S -->
     <string name="s1_select_city">Select City</string>
+    <string name="widget_lg_4x2_name">Weather Clock (LG 4x2)</string>
+    <string name="widget_lg_4x1_name">Weather Clock (LG 4x1)</string>
+    <string name="widget_lg_2x2_name">Weather (LG 2x2)</string>
 </resources>

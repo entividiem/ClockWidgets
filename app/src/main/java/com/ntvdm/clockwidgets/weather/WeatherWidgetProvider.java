@@ -56,6 +56,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     // last fetched weather
     static final String KEY_TEMP = "temp";
     static final String KEY_LOW = "low";
+    static final String KEY_FEELS = "feels";
     static final String KEY_HIGH = "high";
     /** comma lists, index 0 = today: WMO code, max, min (Xperia forecast side) */
     static final String KEY_DAILY_CODES = "daily_codes";
@@ -75,6 +76,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final int STYLE_CHRONUS = 4;
     static final int STYLE_GALAXY_S = 5;
     static final int STYLE_XPERIA = 6;
+    static final int STYLE_LG_4X2 = 7;
+    static final int STYLE_LG_4X1 = 8;
+    static final int STYLE_LG_2X2 = 9;
 
     /** true while a fetch runs (the Galaxy S clock spins its refresh button meanwhile) */
     static volatile boolean sFetching;
@@ -198,7 +202,12 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         return concat(idsOf(context, WeatherWidgetProvider.class), idsOf(context, CleanWidgetProvider.class),
                 idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
                 idsOf(context, ChronusWidgetProvider.class), idsOf(context, GalaxySWidgetProvider.class),
-                idsOf(context, XperiaWidgetProvider.class));
+                idsOf(context, XperiaWidgetProvider.class), lgIds(context));
+    }
+
+    private static int[] lgIds(Context context) {
+        return concat(idsOf(context, Lg4x2WidgetProvider.class), idsOf(context, Lg4x1WidgetProvider.class),
+                idsOf(context, Lg2x2WidgetProvider.class));
     }
 
     private static int[] idsOf(Context context, Class<?> cls) {
@@ -226,6 +235,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (ChronusWidgetProvider.class.getName().equals(cls)) return STYLE_CHRONUS;
         if (GalaxySWidgetProvider.class.getName().equals(cls)) return STYLE_GALAXY_S;
         if (XperiaWidgetProvider.class.getName().equals(cls)) return STYLE_XPERIA;
+        if (Lg4x2WidgetProvider.class.getName().equals(cls)) return STYLE_LG_4X2;
+        if (Lg4x1WidgetProvider.class.getName().equals(cls)) return STYLE_LG_4X1;
+        if (Lg2x2WidgetProvider.class.getName().equals(cls)) return STYLE_LG_2X2;
         return STYLE_HTC;
     }
 
@@ -239,9 +251,11 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (manualClock(context)) {
             return allIds(context);
         }
-        // Galaxy S: hands are an AnalogClock, but the day-of-month box needs a nudge too
+        // Galaxy S: hands are an AnalogClock, but the day-of-month box needs a nudge too.
+        // LG: hours / colon / minutes are separate TextViews, as in the original.
         return concat(idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
-                idsOf(context, GalaxySWidgetProvider.class));
+                idsOf(context, GalaxySWidgetProvider.class), idsOf(context, Lg4x2WidgetProvider.class),
+                idsOf(context, Lg4x1WidgetProvider.class)); // the LG 2x2 has no clock
     }
 
     /** After a failed fetch, try again sooner than the 30-minute widget update. */
@@ -356,6 +370,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 .putFloat(KEY_TEMP, (float) c.temperature)
                 .putFloat(KEY_LOW, (float) c.low)
                 .putFloat(KEY_HIGH, (float) c.high)
+                .putFloat(KEY_FEELS, (float) c.feelsLike)
                 .putString(KEY_DAILY_CODES, join(c.dailyCode))
                 .putString(KEY_DAILY_MAX, join(c.dailyMax))
                 .putString(KEY_DAILY_MIN, join(c.dailyMin))
@@ -395,6 +410,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         RemoteViews rv;
         if (style == STYLE_XPERIA) {
             awm.updateAppWidget(id, Xperia.render(context, id, p, PI_FLAGS)); // own click handling
+            return;
+        }
+        if (style == STYLE_LG_4X2 || style == STYLE_LG_4X1 || style == STYLE_LG_2X2) {
+            awm.updateAppWidget(id, Lg.render(context, style, p, sFetching, PI_FLAGS)); // own click handling
             return;
         }
         if (style == STYLE_GALAXY_S) {
@@ -546,7 +565,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    private static Intent clockIntent(Context context) {
+    static Intent clockIntent(Context context) {
         if (Build.VERSION.SDK_INT >= 19) {
             return new Intent("android.intent.action.SHOW_ALARMS");
         }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LG Optimus weather widget (theme.optimus colors), lg_ prefixed. -->
+<resources>
+    <color name="lg_widget_update_background">#4c000000</color>
+    <color name="lg_widget_s_today_background">#59000000</color>
+    <color name="lg_widget_s_otherday_background">#33000000</color>
+    <color name="lg_widget_s_divider_color">#4cffffff</color>
+</resources>

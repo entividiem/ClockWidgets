@@ -10,6 +10,7 @@ Weather clock widgets powered by [Open-Meteo](https://open-meteo.com) (free, no 
 - **Weather Clock (Galaxy S4)** – TouchWiz 4x2 with weather photo backgrounds
 - **Weather Clock (Galaxy S)** – TouchWiz 3.0 analog AccuWeather clock from the original Galaxy S, 4x3
 - **Weather Clock (Xperia)** – Sony Ericsson Xperia (2011) Home weather widget, 2x3, tap to flip to the 3-day forecast
+- **Weather Clock (LG 4x2 / 4x1) and Weather (LG 2x2)** – LG Optimus (2012) weather widgets with the condition photos, 4x1 with a 3-day strip
 - **Weather Clock (Chronus)** – CyanogenMod 10 lock clock (JB digital clock + weather panel), Android 4.2+
 
 Set them up in the app's main screen ("Weather Clocks" section): °C/°F and location (current location or

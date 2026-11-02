@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LG Optimus weather widget 4x1 (LG: @dimen/widget_m_initial_minWidth / minHeight) -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="294dp"
+    android:minHeight="68dp"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/weather_widget_lg_4x1"
+    android:previewImage="@drawable/lg_preview_m"
+    android:widgetCategory="home_screen" />

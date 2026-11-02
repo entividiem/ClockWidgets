@@ -24,6 +24,8 @@ final class OpenMeteo {
 
     static final class Current {
         double temperature;
+        /** "feels like" (apparent temperature; NaN if not sent) - LG widgets */
+        double feelsLike = Double.NaN;
         /** today's min / max (NaN if not sent) */
         double low = Double.NaN;
         double high = Double.NaN;
@@ -39,7 +41,7 @@ final class OpenMeteo {
     static Current fetch(double lat, double lon, boolean fahrenheit) throws IOException, JSONException {
         String path = "/v1/forecast"
                 + String.format(Locale.US, "?latitude=%.4f&longitude=%.4f", lat, lon)
-                + "&current=temperature_2m,weather_code,is_day"
+                + "&current=temperature_2m,apparent_temperature,weather_code,is_day"
                 + "&daily=weather_code,temperature_2m_max,temperature_2m_min"
                 + "&timezone=auto&forecast_days=" + DAYS
                 + (fahrenheit ? "&temperature_unit=fahrenheit" : "");
@@ -51,6 +53,7 @@ final class OpenMeteo {
 
         Current c = new Current();
         c.temperature = now.getDouble("temperature_2m");
+        c.feelsLike = now.optDouble("apparent_temperature", Double.NaN);
         c.icon = icon(code, day);
         c.summary = summary(code);
         c.timezone = root.optString("timezone", "");
