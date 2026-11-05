@@ -18,17 +18,17 @@ AVAILABLE"</string>
     <string name="searching">Searching…</string>
     <string name="tap_to_setup">TAP TO SET UP</string>
     <string name="tap_to_setup_clean">Tap to set up</string>
-    <string name="widget_clean_name">Weather Clock (Clean)</string>
-    <string name="widget_htc_name">Weather Clock (HTC)</string>
-    <string name="widget_s3_name">Weather Clock (Galaxy S3)</string>
-    <string name="widget_xperia_name">Weather Clock (Xperia)</string>
-    <string name="widget_galaxys_name">Weather Clock (Galaxy S)</string>
-    <string name="widget_chronus_name">Weather Clock (Chronus)</string>
-    <string name="widget_s4_name">Weather Clock (Galaxy S4)</string>
+    <string name="widget_clean_name">S6 Style</string>
+    <string name="widget_htc_name">HTC senseUI 5</string>
+    <string name="widget_s3_name">Galaxy S3 style</string>
+    <string name="widget_xperia_name">Xperia (2.3) style</string>
+    <string name="widget_galaxys_name">Galaxy S1 style</string>
+    <string name="widget_chronus_name">Chronus (4.2) style</string>
+    <string name="widget_s4_name">Galaxy S4 style</string>
 
     <!-- setup section on the main screen -->
-    <string name="weather_section_title">Weather Clocks</string>
-    <string name="weather_section_help">weather clocks are in the widget picker as "Weather Clock"</string>
+    <string name="weather_section_title">Weather Clockies</string>
+    <string name="weather_section_help">weather clocks are in the widget picker</string>
     <string name="use_my_location">Use my current location</string>
     <string name="search_hint">…or search a city</string>
     <string name="weather_location_label">Location: %1$s</string>
@@ -48,7 +48,7 @@ AVAILABLE"</string>
     <string name="weather_attribution">Weather data by Open-Meteo.com (CC BY 4.0) – free, no API key needed</string>
     <!-- Galaxy S -->
     <string name="s1_select_city">Select City</string>
-    <string name="widget_lg_4x2_name">Weather Clock (LG 4x2)</string>
-    <string name="widget_lg_4x1_name">Weather Clock (LG 4x1)</string>
-    <string name="widget_lg_2x2_name">Weather (LG 2x2)</string>
+    <string name="widget_lg_4x2_name">LG (4.x) style</string>
+    <string name="widget_lg_4x1_name">LG (4.x) style</string>
+    <string name="widget_lg_2x2_name">LG (4.x) style</string>
 </resources>
