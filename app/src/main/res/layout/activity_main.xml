@@ -164,22 +164,14 @@
                 android:text="@string/weather_section_help"
                 android:textSize="13sp" />
 
-            <EditText
-                android:id="@+id/weather_api_key"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/api_key_hint"
-                android:imeOptions="actionDone"
-                android:inputType="textNoSuggestions"
-                android:singleLine="true"
-                android:typeface="monospace" />
-
+            <!-- Open-Meteo's free tier is CC BY 4.0: credit the data source -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:autoLink="web"
-                android:text="@string/api_key_help"
+                android:gravity="center_horizontal"
+                android:text="@string/weather_attribution"
                 android:textSize="12sp" />
 
             <RadioGroup

@@ -36,8 +36,9 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Drives the "Weather Clocks" section of the main screen: Pirate Weather API key, °C/°F and
- * location (current GPS/network fix, or a city searched via Open-Meteo's free geocoder).
+ * Drives the "Weather Clocks" section of the main screen: °C/°F and location (current
+ * GPS/network fix, or a city searched via Open-Meteo's free geocoder). Weather comes from
+ * Open-Meteo, which needs no API key.
  * Settings are shared by every weather widget and saved as soon as they change.
  *
  * The host activity forwards onPause / onDestroy / onRequestPermissionsResult.
@@ -57,7 +58,6 @@ public class WeatherSetup {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final View section;
-    private final EditText apiKey;
     private final EditText query;
     private final TextView location;
     private final TextView status;
@@ -73,28 +73,9 @@ public class WeatherSetup {
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
         section = activity.findViewById(R.id.weather_section);
-        apiKey = (EditText) activity.findViewById(R.id.weather_api_key);
         query = (EditText) activity.findViewById(R.id.weather_query);
         location = (TextView) activity.findViewById(R.id.weather_location);
         status = (TextView) activity.findViewById(R.id.weather_status);
-
-        apiKey.setText(WeatherWidgetProvider.apiKey(activity));
-        apiKey.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    saveApiKey();
-                }
-            }
-        });
-        apiKey.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                saveApiKey();
-                hideKeyboard(apiKey);
-                return true;
-            }
-        });
 
         boolean fahrenheit = prefs.contains(WeatherWidgetProvider.KEY_FAHRENHEIT)
                 ? prefs.getBoolean(WeatherWidgetProvider.KEY_FAHRENHEIT, false)
@@ -156,7 +137,6 @@ public class WeatherSetup {
         activity.findViewById(R.id.weather_refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveApiKey();
                 refreshWidgets();
             }
         });
@@ -175,9 +155,6 @@ public class WeatherSetup {
                 scroll.smoothScrollTo(0, section.getTop());
             }
         });
-        if (WeatherWidgetProvider.apiKey(activity).length() == 0) {
-            apiKey.requestFocus();
-        }
     }
 
     public void onResume() {
@@ -185,7 +162,7 @@ public class WeatherSetup {
     }
 
     public void onPause() {
-        saveApiKey();
+        // nothing to save: every setting is stored as soon as it changes
     }
 
     public void onDestroy() {
@@ -194,15 +171,6 @@ public class WeatherSetup {
     }
 
     // ---------------------------------------------------------------- settings
-
-    private void saveApiKey() {
-        String key = apiKey.getText().toString().trim();
-        if (key.equals(WeatherWidgetProvider.apiKey(activity))) {
-            return;
-        }
-        prefs.edit().putString(WeatherWidgetProvider.KEY_API_KEY, key).commit();
-        refreshWidgets();
-    }
 
     private void saveLocation(String mode, double lat, double lon, String name) {
         prefs.edit()
@@ -213,14 +181,11 @@ public class WeatherSetup {
                 .remove(WeatherWidgetProvider.KEY_TEMP)
                 .commit();
         updateLocationLabel();
-        saveApiKey();
         refreshWidgets();
     }
 
     private void refreshWidgets() {
-        if (WeatherWidgetProvider.apiKey(activity).length() == 0) {
-            showStatus(activity.getString(R.string.api_key_missing));
-        } else if (!WeatherWidgetProvider.isConfigured(prefs)) {
+        if (!WeatherWidgetProvider.isConfigured(prefs)) {
             showStatus(activity.getString(R.string.weather_pick_location));
         } else if (WeatherWidgetProvider.allIds(activity).length == 0) {
             showStatus(activity.getString(R.string.weather_saved_no_widgets));
@@ -344,7 +309,8 @@ public class WeatherSetup {
             }
         };
         try {
-            locationManager.requestSingleUpdate(provider, pendingListener, Looper.getMainLooper());
+            // requestSingleUpdate() is 2.3+; the listener removes itself after the first fix
+            locationManager.requestLocationUpdates(provider, 0, 0f, pendingListener, Looper.getMainLooper());
             handler.postDelayed(locateTimeout, LOCATE_TIMEOUT_MS);
         } catch (SecurityException e) {
             pendingListener = null;

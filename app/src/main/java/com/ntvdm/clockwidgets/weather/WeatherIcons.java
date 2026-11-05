@@ -2,59 +2,18 @@ package com.ntvdm.clockwidgets.weather;
 
 import com.ntvdm.clockwidgets.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.Locale;
-
 /**
- * Pirate Weather (https://pirateweather.net) client + mapping of its icon names
- * onto the old AccuWeather condition codes (1-44) that the HTC / TouchWiz artwork uses.
+ * Maps condition names ("clear-day", "partly-cloudy-night", "rain", "possible-snow-day", ...,
+ * the Dark Sky / Pirate Weather vocabulary, produced from WMO codes by {@link OpenMeteo})
+ * onto the artwork codes each widget style uses: AccuWeather 1-44 for HTC / TouchWiz,
+ * Yahoo! 0-47 for Chronus.
  */
-final class PirateWeather {
+final class WeatherIcons {
 
-    private PirateWeather() {
+    private WeatherIcons() {
     }
 
-    static final class Current {
-        double temperature;
-        /** today's min / max (NaN if Pirate Weather didn't send a daily block) */
-        double low = Double.NaN;
-        double high = Double.NaN;
-        String icon;
-        String summary;
-        String timezone;
-    }
-
-    static Current fetch(String apiKey, double lat, double lon, boolean fahrenheit)
-            throws IOException, JSONException {
-        String path = "/forecast/" + apiKey + "/"
-                + String.format(Locale.US, "%.4f,%.4f", lat, lon)
-                + "?exclude=minutely,hourly,alerts,flags"
-                + "&units=" + (fahrenheit ? "us" : "si")
-                + "&version=2&icon=pirate";
-        JSONObject root = new JSONObject(Net.get("api.pirateweather.net", path));
-        JSONObject now = root.getJSONObject("currently");
-
-        Current c = new Current();
-        c.temperature = now.getDouble("temperature");
-        c.icon = now.optString("icon", "cloudy");
-        c.timezone = root.optString("timezone", "");
-        c.summary = now.optString("summary", "");
-
-        JSONObject daily = root.optJSONObject("daily");
-        JSONArray days = daily == null ? null : daily.optJSONArray("data");
-        if (days != null && days.length() > 0) {
-            JSONObject today = days.getJSONObject(0);
-            c.low = today.optDouble("temperatureMin", Double.NaN);
-            c.high = today.optDouble("temperatureMax", Double.NaN);
-        }
-        return c;
-    }
-
-    /** Pirate Weather icon name -> AccuWeather code (day 1-32, night 33-44). */
+    /** condition name -> AccuWeather code (day 1-32, night 33-44). */
     static int accuCode(String icon) {
         if (icon == null) {
             return 7;
@@ -138,7 +97,7 @@ final class PirateWeather {
     }
 
     /**
-     * Pirate Weather icon -> Yahoo! Weather condition code (0-47), used by the Chronus
+     * condition name -> Yahoo! Weather condition code (0-47), used by the Chronus
      * (CyanogenMod lock clock) icon set. -1 = not available.
      */
     static int yahooCode(String icon) {

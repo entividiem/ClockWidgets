@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock (Galaxy S) - TouchWiz 3.0 "AccuWeather Clock" (com.sec.android.widgetapp.weatherclock,
+     Galaxy S GT-I9000), rebuilt from its weatherclock.xml as a normal AppWidget. Same dp positions as
+     the original, moved up 30.7dp (the original left room for TouchWiz's page dots). Weather from
+     Open-Meteo; the AccuWeather.com logo is replaced by the Open-Meteo credit. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="320dip"
+        android:layout_height="250dip"
+        android:layout_gravity="center_horizontal|top">
+
+        <!-- ===== dial (186.66dp, 280px at hdpi) ===== -->
+        <RelativeLayout
+            android:id="@+id/widget_clock_box"
+            android:layout_width="186.66dip"
+            android:layout_height="186.66dip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="4dip">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/s1_weather_clock_bg" />
+
+            <!-- round weather photo (clockweatherimg) -->
+            <ImageView
+                android:id="@+id/s1_weather_photo"
+                android:layout_width="164.6dip"
+                android:layout_height="164.6dip"
+                android:layout_marginLeft="11.35dip"
+                android:layout_marginTop="11.35dip"
+                android:scaleType="fitXY" />
+
+            <!-- day of month box (clockday) -->
+            <FrameLayout
+                android:layout_width="30dip"
+                android:layout_height="22.6dip"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="33dip"
+                android:layout_marginTop="82dip"
+                android:background="@drawable/s1_weather_day_bg">
+
+                <TextView
+                    android:id="@+id/s1_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="#ff000000"
+                    android:textSize="14.6dip"
+                    android:textStyle="bold"
+                    android:typeface="sans" />
+            </FrameLayout>
+
+            <!-- high / low from Samsung's digit images, drawn into one bitmap -->
+            <ImageView
+                android:id="@+id/s1_temps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="117dip" />
+
+            <!-- ticks + glass as the dial, Samsung's hands (padded so the pivot is centred) -->
+            <AnalogClock
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:dial="@drawable/s1_weather_clock_light"
+                android:hand_hour="@drawable/s1_hand_hour"
+                android:hand_minute="@drawable/s1_hand_minute" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/s1_weather_clock_center" />
+        </RelativeLayout>
+
+        <!-- ===== city bar ===== -->
+        <RelativeLayout
+            android:layout_width="226.66dip"
+            android:layout_height="66.66dip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="184.3dip">
+
+            <FrameLayout
+                android:id="@+id/widget_weather_place"
+                android:layout_width="218.66dip"
+                android:layout_height="41.33dip"
+                android:layout_marginLeft="6.8dip"
+                android:layout_marginTop="9.17dip"
+                android:background="@drawable/s1_weather_bar_bg">
+
+                <!-- not set up yet (emptyselectcity) -->
+                <TextView
+                    android:id="@+id/s1_select_city"
+                    android:layout_width="160dip"
+                    android:layout_height="32dip"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="1dip"
+                    android:gravity="center"
+                    android:text="@string/s1_select_city"
+                    android:textColor="#ffffffff"
+                    android:textSize="17.3dip"
+                    android:typeface="sans" />
+
+                <!-- set up (notemptyselectcity1) -->
+                <LinearLayout
+                    android:id="@+id/s1_city_row"
+                    android:layout_width="218.66dip"
+                    android:layout_height="32dip"
+                    android:layout_marginTop="1dip"
+                    android:orientation="horizontal">
+
+                    <!-- marginLeft = the 31.6dp slot that held the DST icon
+                         (a plain <View> spacer isn't allowed in RemoteViews) -->
+                    <TextView
+                        android:id="@+id/s1_city"
+                        android:layout_width="86dip"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="31.6dip"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical|left"
+                        android:singleLine="true"
+                        android:textColor="#ffffea00"
+                        android:textSize="17.3sp" />
+
+                    <LinearLayout
+                        android:layout_width="58dip"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="12dip"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/s1_updated_date"
+                            android:layout_width="58dip"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:singleLine="true"
+                            android:textColor="#aaffffff"
+                            android:textSize="9.5dip" />
+
+                        <TextView
+                            android:id="@+id/s1_updated_time"
+                            android:layout_width="58dip"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:singleLine="true"
+                            android:textColor="#aaffffff"
+                            android:textSize="9.5dip" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- where the AccuWeather.com logo was: Open-Meteo's CC BY credit -->
+            <TextView
+                android:layout_width="218.66dip"
+                android:layout_height="16.66dip"
+                android:layout_marginTop="48dip"
+                android:gravity="center"
+                android:shadowColor="#cc000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1.5"
+                android:text="@string/s3_source"
+                android:textColor="#ffffffff"
+                android:textSize="11dip"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- ===== refresh button, spins while fetching ===== -->
+        <FrameLayout
+            android:id="@+id/widget_weather_box"
+            android:layout_width="40.67dip"
+            android:layout_height="40.67dip"
+            android:layout_marginLeft="238dip"
+            android:layout_marginTop="183.9dip">
+
+            <ImageView
+                android:id="@+id/s1_refresh"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/s1_updates_btn_selector" />
+
+            <ViewFlipper
+                android:id="@+id/s1_refreshing"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:autoStart="true"
+                android:flipInterval="100"
+                android:visibility="gone">
+
+                <ImageView android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s1_updates_btn_001" />
+                <ImageView android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s1_updates_btn_002" />
+                <ImageView android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s1_updates_btn_003" />
+                <ImageView android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s1_updates_btn_004" />
+                <ImageView android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s1_updates_btn_005" />
+                <ImageView android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/s1_updates_btn_006" />
+            </ViewFlipper>
+        </FrameLayout>
+    </RelativeLayout>
+</FrameLayout>

@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Weather Clock widgets (HTC / Clean / Galaxy S3 / Galaxy S4) backed by Pirate Weather.
+ * Weather Clock widgets (HTC / Clean / Galaxy S3 / Galaxy S4 / Chronus) backed by Open-Meteo.
  *
  * This class is also the "HTC" widget receiver; the other three styles are empty subclasses
  * so each gets its own entry in the widget picker. Settings (API key, units, location) are
@@ -47,7 +47,6 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     static final String PREFS = "WeatherPrefs";
     // settings
-    static final String KEY_API_KEY = "api_key";
     static final String KEY_MODE = "mode";          // MODE_GPS / MODE_FIXED, unset = not set up
     static final String KEY_LAT = "lat";
     static final String KEY_LON = "lon";
@@ -57,7 +56,12 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     // last fetched weather
     static final String KEY_TEMP = "temp";
     static final String KEY_LOW = "low";
+    static final String KEY_FEELS = "feels";
     static final String KEY_HIGH = "high";
+    /** comma lists, index 0 = today: WMO code, max, min (Xperia forecast side) */
+    static final String KEY_DAILY_CODES = "daily_codes";
+    static final String KEY_DAILY_MAX = "daily_max";
+    static final String KEY_DAILY_MIN = "daily_min";
     static final String KEY_ICON = "icon";
     static final String KEY_SUMMARY = "summary";
     static final String KEY_UPDATED = "updated";
@@ -70,6 +74,14 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static final int STYLE_S4 = 2;
     static final int STYLE_S3 = 3;
     static final int STYLE_CHRONUS = 4;
+    static final int STYLE_GALAXY_S = 5;
+    static final int STYLE_XPERIA = 6;
+    static final int STYLE_LG_4X2 = 7;
+    static final int STYLE_LG_4X1 = 8;
+    static final int STYLE_LG_2X2 = 9;
+
+    /** true while a fetch runs (the Galaxy S clock spins its refresh button meanwhile) */
+    static volatile boolean sFetching;
 
     static final String ACTION_NEXT_ALARM_CHANGED = "android.app.action.NEXT_ALARM_CLOCK_CHANGED"; // 5.0+
     static final String ACTION_ALARM_CHANGED_LEGACY = "android.intent.action.ALARM_CHANGED";
@@ -91,10 +103,6 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
     static SharedPreferences prefs(Context context) {
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-    }
-
-    static String apiKey(Context context) {
-        return prefs(context).getString(KEY_API_KEY, "").trim();
     }
 
     static boolean isConfigured(SharedPreferences p) {
@@ -140,6 +148,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             return;
         }
 
+        if (Xperia.ACTION_FLIP.equals(action)) {
+            // Xperia: tap flips between the weather side and the 3-day forecast
+            int id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            if (id != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Xperia.flip(prefs(context), id);
+                render(context, AppWidgetManager.getInstance(context), id);
+            }
+            return;
+        }
+
         if (ACTION_NEXT_ALARM_CHANGED.equals(action) || ACTION_ALARM_CHANGED_LEGACY.equals(action)) {
             // Chronus shows the next alarm next to the date
             AppWidgetManager awm = AppWidgetManager.getInstance(context);
@@ -164,6 +182,14 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        SharedPreferences p = prefs(context);
+        for (int id : appWidgetIds) {
+            Xperia.forget(p, id);
+        }
+    }
+
+    @Override
     public void onDisabled(Context context) {
         if (tickingIds(context).length == 0) {
             ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).cancel(tickIntent(context));
@@ -175,7 +201,13 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static int[] allIds(Context context) {
         return concat(idsOf(context, WeatherWidgetProvider.class), idsOf(context, CleanWidgetProvider.class),
                 idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
-                idsOf(context, ChronusWidgetProvider.class));
+                idsOf(context, ChronusWidgetProvider.class), idsOf(context, GalaxySWidgetProvider.class),
+                idsOf(context, XperiaWidgetProvider.class), lgIds(context));
+    }
+
+    private static int[] lgIds(Context context) {
+        return concat(idsOf(context, Lg4x2WidgetProvider.class), idsOf(context, Lg4x1WidgetProvider.class),
+                idsOf(context, Lg2x2WidgetProvider.class));
     }
 
     private static int[] idsOf(Context context, Class<?> cls) {
@@ -201,6 +233,11 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (S4WidgetProvider.class.getName().equals(cls)) return STYLE_S4;
         if (S3WidgetProvider.class.getName().equals(cls)) return STYLE_S3;
         if (ChronusWidgetProvider.class.getName().equals(cls)) return STYLE_CHRONUS;
+        if (GalaxySWidgetProvider.class.getName().equals(cls)) return STYLE_GALAXY_S;
+        if (XperiaWidgetProvider.class.getName().equals(cls)) return STYLE_XPERIA;
+        if (Lg4x2WidgetProvider.class.getName().equals(cls)) return STYLE_LG_4X2;
+        if (Lg4x1WidgetProvider.class.getName().equals(cls)) return STYLE_LG_4X1;
+        if (Lg2x2WidgetProvider.class.getName().equals(cls)) return STYLE_LG_2X2;
         return STYLE_HTC;
     }
 
@@ -214,7 +251,21 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         if (manualClock(context)) {
             return allIds(context);
         }
-        return concat(idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class));
+        // Galaxy S: hands are an AnalogClock, but the day-of-month box needs a nudge too.
+        // LG: hours / colon / minutes are separate TextViews, as in the original.
+        return concat(idsOf(context, S4WidgetProvider.class), idsOf(context, S3WidgetProvider.class),
+                idsOf(context, GalaxySWidgetProvider.class), idsOf(context, Lg4x2WidgetProvider.class),
+                idsOf(context, Lg4x1WidgetProvider.class)); // the LG 2x2 has no clock
+    }
+
+    /** After a failed fetch, try again sooner than the 30-minute widget update. */
+    private static final long RETRY_DELAY_MS = 10 * 60 * 1000;
+
+    private static void scheduleRetry(Context context) {
+        Intent i = new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_REFRESH);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 2, i, PI_FLAGS); // one pending retry at most
+        ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE))
+                .set(AlarmManager.RTC, System.currentTimeMillis() + RETRY_DELAY_MS, pi);
     }
 
     private static PendingIntent tickIntent(Context context) {
@@ -238,15 +289,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         final Context app = context.getApplicationContext();
         final AppWidgetManager awm = AppWidgetManager.getInstance(app);
 
-        // draw immediately with cached data, then fetch in the background
-        for (int id : ids) {
-            render(app, awm, id);
-        }
         if (tickingIds(app).length > 0) {
             scheduleTick(app);
         }
         if (ids.length == 0) {
             return;
+        }
+        // draw immediately with cached data, then fetch in the background
+        sFetching = true;
+        for (int id : ids) {
+            render(app, awm, id);
         }
 
         // goAsync() is API 11+; on 2.3 the thread just runs in our process
@@ -259,11 +311,14 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                         fetch(app);
                     } catch (Exception e) {
                         Log.w(TAG, "Weather update failed", e);
+                        scheduleRetry(app); // e.g. Open-Meteo 503 during a short outage
                     }
+                    sFetching = false;
                     for (int id : ids) {
                         render(app, awm, id);
                     }
                 } finally {
+                    sFetching = false;
                     if (pending != null) {
                         pending.finish();
                     }
@@ -276,8 +331,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     static void fetch(Context context) throws Exception {
         SharedPreferences p = prefs(context);
         String mode = p.getString(KEY_MODE, null);
-        String apiKey = apiKey(context);
-        if (mode == null || apiKey.length() == 0) {
+        if (mode == null) {
             return; // not set up yet
         }
 
@@ -304,9 +358,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             }
         }
 
-        PirateWeather.Current c = PirateWeather.fetch(apiKey, lat, lon, p.getBoolean(KEY_FAHRENHEIT, false));
+        OpenMeteo.Current c = OpenMeteo.fetch(lat, lon, p.getBoolean(KEY_FAHRENHEIT, false));
         if (name.length() == 0) {
-            name = PirateWeather.cityFromTimezone(c.timezone);
+            name = WeatherIcons.cityFromTimezone(c.timezone);
         }
 
         p.edit()
@@ -316,10 +370,32 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 .putFloat(KEY_TEMP, (float) c.temperature)
                 .putFloat(KEY_LOW, (float) c.low)
                 .putFloat(KEY_HIGH, (float) c.high)
+                .putFloat(KEY_FEELS, (float) c.feelsLike)
+                .putString(KEY_DAILY_CODES, join(c.dailyCode))
+                .putString(KEY_DAILY_MAX, join(c.dailyMax))
+                .putString(KEY_DAILY_MIN, join(c.dailyMin))
                 .putString(KEY_ICON, c.icon)
                 .putString(KEY_SUMMARY, c.summary)
                 .putLong(KEY_UPDATED, System.currentTimeMillis())
                 .commit();
+    }
+
+    private static String join(int[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < a.length; i++) {
+            if (i > 0) sb.append(',');
+            sb.append(a[i]);
+        }
+        return sb.toString();
+    }
+
+    private static String join(double[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < a.length; i++) {
+            if (i > 0) sb.append(',');
+            sb.append(Double.isNaN(a[i]) ? "" : Long.toString(Math.round(a[i])));
+        }
+        return sb.toString();
     }
 
     // ---------------------------------------------------------------- rendering
@@ -332,7 +408,17 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         boolean hasData = configured && p.contains(KEY_TEMP);
 
         RemoteViews rv;
-        if (style == STYLE_CHRONUS) {
+        if (style == STYLE_XPERIA) {
+            awm.updateAppWidget(id, Xperia.render(context, id, p, PI_FLAGS)); // own click handling
+            return;
+        }
+        if (style == STYLE_LG_4X2 || style == STYLE_LG_4X1 || style == STYLE_LG_2X2) {
+            awm.updateAppWidget(id, Lg.render(context, style, p, sFetching, PI_FLAGS)); // own click handling
+            return;
+        }
+        if (style == STYLE_GALAXY_S) {
+            rv = GalaxyS.render(context, p, sFetching);
+        } else if (style == STYLE_CHRONUS) {
             rv = Chronus.render(context, awm, id, p);
         } else if (style == STYLE_S4 || style == STYLE_S3) {
             boolean s3 = style == STYLE_S3;
@@ -350,7 +436,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                                        boolean s3, boolean configured, boolean hasData) {
         SamsungTheme theme = s3 ? SamsungTheme.S3 : SamsungTheme.S4;
         Date now = new Date();
-        int code = hasData ? PirateWeather.accuCode(p.getString(KEY_ICON, null)) : 0;
+        int code = hasData ? WeatherIcons.accuCode(p.getString(KEY_ICON, null)) : 0;
 
         rv.setImageViewBitmap(R.id.tw_time, theme.renderTime(context,
                 new SimpleDateFormat("HH:mm", Locale.getDefault()).format(now), s3 ? 62f : 52f));
@@ -426,7 +512,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     : context.getString(R.string.tap_to_setup_clean));
             if (hasData) {
                 rv.setTextViewText(R.id.widget_weather_temp, Math.round(p.getFloat(KEY_TEMP, 0f)) + "°");
-                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(KEY_ICON, null)));
+                rv.setImageViewResource(R.id.widget_weather_icon, WeatherIcons.iconRes(p.getString(KEY_ICON, null)));
             }
             return;
         }
@@ -441,7 +527,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     temp = ", " + temp;
                 }
                 rv.setTextViewText(R.id.widget_weather_temp, temp);
-                rv.setImageViewResource(R.id.widget_weather_icon, PirateWeather.iconRes(p.getString(KEY_ICON, null)));
+                rv.setImageViewResource(R.id.widget_weather_icon, WeatherIcons.iconRes(p.getString(KEY_ICON, null)));
             }
             rv.setTextViewText(R.id.widget_weather_place, place);
         } else {
@@ -479,7 +565,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    private static Intent clockIntent(Context context) {
+    static Intent clockIntent(Context context) {
         if (Build.VERSION.SDK_INT >= 19) {
             return new Intent("android.intent.action.SHOW_ALARMS");
         }

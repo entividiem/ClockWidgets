@@ -51,7 +51,7 @@ final class Chronus {
         boolean configured = WeatherWidgetProvider.isConfigured(p);
         boolean hasData = configured && p.contains(WeatherWidgetProvider.KEY_TEMP);
         if (hasData) {
-            int code = PirateWeather.yahooCode(p.getString(WeatherWidgetProvider.KEY_ICON, null));
+            int code = WeatherIcons.yahooCode(p.getString(WeatherWidgetProvider.KEY_ICON, null));
             rv.setImageViewResource(R.id.widget_weather_icon, icon(context, code, altIcons(p)));
             rv.setTextViewText(R.id.widget_weather_place, p.getString(WeatherWidgetProvider.KEY_NAME, ""));
             rv.setTextViewText(R.id.chronus_condition, p.getString(WeatherWidgetProvider.KEY_SUMMARY, ""));

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LG Optimus weather widget (theme.optimus styles), lg_ prefixed. -->
+<resources>
+    <style name="lg_widget_weather_widget_am_pm">
+        <item name="android:textSize">17.6dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_date">
+        <item name="android:textSize">15.84dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_details">
+        <item name="android:textSize">13.2dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_loading">
+        <item name="android:textSize">15dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_location">
+        <item name="android:textSize">14.08dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_ampm">
+        <item name="android:textSize">10.56dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_cityname">
+        <item name="android:textSize">14.08dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_date">
+        <item name="android:textSize">13dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_day">
+        <item name="android:textSize">12.32dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_day_normal">
+        <item name="android:textSize">12.32dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_hl_temp">
+        <item name="android:textSize">12.32dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_m_time_num">
+        <item name="android:textSize">30.8dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_page">
+        <item name="android:textSize">12.32dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_s_cityname">
+        <item name="android:textSize">14.08dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_s_current_temp">
+        <item name="android:textSize">48.4dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_s_hl_temp">
+        <item name="android:textSize">12.32dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_s_update">
+        <item name="android:textSize">10.56dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_s_weather_state">
+        <item name="android:textSize">14.08dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_state">
+        <item name="android:textSize">15.84dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_tabto">
+        <item name="android:textSize">14.08dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_temperature_num">
+        <item name="android:textSize">36.96dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_time_num">
+        <item name="android:textSize">50.16dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="lg_widget_weather_widget_update">
+        <item name="android:textSize">10.56dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>

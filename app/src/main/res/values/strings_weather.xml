@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Weather Clock widgets (Pirate Weather) -->
-    <string name="api_key_help">Get free key at https://pirateweather.net</string>
-    <string name="api_key_hint">Pirate Weather API key</string>
+    <!-- Weather Clock widgets (Open-Meteo) -->
     <string name="weather_app_name">Weather Clock</string>
     <string name="celsius">°C</string>
     <string name="current_location">Current location</string>
@@ -15,7 +13,7 @@
 DATA
 AVAILABLE"</string>
     <string name="permission_denied">Location permission denied. Search a city instead.</string>
-    <string name="s3_source">PirateWeather.net</string>
+    <string name="s3_source">Open-Meteo.com</string>
     <string name="search">Search</string>
     <string name="searching">Searching…</string>
     <string name="tap_to_setup">TAP TO SET UP</string>
@@ -23,6 +21,8 @@ AVAILABLE"</string>
     <string name="widget_clean_name">S6 Style</string>
     <string name="widget_htc_name">HTC senseUI 5</string>
     <string name="widget_s3_name">Galaxy S3 style</string>
+    <string name="widget_xperia_name">Xperia (2.3) style</string>
+    <string name="widget_galaxys_name">Galaxy S1 style</string>
     <string name="widget_chronus_name">Chronus (4.2) style</string>
     <string name="widget_s4_name">Galaxy S4 style</string>
 
@@ -31,7 +31,6 @@ AVAILABLE"</string>
     <string name="weather_section_help">weather clocks are in the widget picker</string>
     <string name="use_my_location">Use my current location</string>
     <string name="search_hint">…or search a city</string>
-    <string name="api_key_missing">Enter your Pirate Weather API key above to get weather.</string>
     <string name="weather_location_label">Location: %1$s</string>
     <string name="weather_location_none">Location: not set</string>
     <string name="weather_pick_location">Now pick a location below.</string>
@@ -46,4 +45,10 @@ AVAILABLE"</string>
     <string name="chronus_tap_to_refresh">Tap to refresh</string>
     <string name="chronus_just_now">Just now</string>
     <string name="weather_chronus_alt_icons">Chronus: use colour weather icons</string>
+    <string name="weather_attribution">Weather data by Open-Meteo.com (CC BY 4.0) – free, no API key needed</string>
+    <!-- Galaxy S -->
+    <string name="s1_select_city">Select City</string>
+    <string name="widget_lg_4x2_name">LG (4.x) style</string>
+    <string name="widget_lg_4x1_name">LG (4.x) style</string>
+    <string name="widget_lg_2x2_name">LG (4.x) style</string>
 </resources>

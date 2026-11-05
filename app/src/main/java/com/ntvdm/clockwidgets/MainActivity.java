@@ -222,7 +222,7 @@ public class MainActivity extends Activity {
 
     private void applyTheme(String themeKey) {
         SharedPreferences prefs = getSharedPreferences("ClockPrefs", Context.MODE_PRIVATE);
-        prefs.edit().putString("selected_theme", themeKey).apply();
+        prefs.edit().putString("selected_theme", themeKey).commit(); // apply() is 2.3+
 
         Intent intent = new Intent(this, AnalogWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -237,4 +237,4 @@ public class MainActivity extends Activity {
     }
 
 
-}
+}

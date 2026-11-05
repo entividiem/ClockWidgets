@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Weather Clock (Chronus) - CyanogenMod 10 "Chronus" lock clock (com.cyanogenmod.lockclock 1.01):
-     clock_panel.xml + weather_panel.xml from the original, weather from Pirate Weather.
+     clock_panel.xml + weather_panel.xml from the original, weather from Open-Meteo.
      Uses TextClock, so the receiver is only enabled on 4.2+ (values-v17/bools.xml). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/chronus_root"

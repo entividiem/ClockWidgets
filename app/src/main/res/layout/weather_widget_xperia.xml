@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather Clock (Xperia): the whole plate is one picture composed by Xperia.java
+     (Sony's layers + labels), scaled to fit the cell. Both orientations are sent;
+     layout shows the portrait one (Sony had a separate landscape plate). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ImageView
+        android:id="@+id/xperia_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:visibility="visible"
+        android:src="@drawable/xp_plate" />
+
+    <ImageView
+        android:id="@+id/xperia_image_land"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:src="@drawable/xp_land_plate" />
+</FrameLayout>

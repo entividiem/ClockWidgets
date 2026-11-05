@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4x3 (pre-ICS cell formula: 74 * cells - 2). Content is a fixed 320x250dp block, top-centred. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="294dp"
+    android:minHeight="220dp"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/weather_widget_galaxys"
+    android:previewImage="@drawable/s1_preview"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen" />

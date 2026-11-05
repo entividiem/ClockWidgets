@@ -28,7 +28,7 @@ import java.util.Comparator;
 final class FramedBackground {
 
     private static final String DIR = "framed";
-    private static final int MAX_FILES = 8;
+    private static final int MAX_FILES = 16; // Xperia keeps front/back/setup x port/land
 
     private FramedBackground() {
     }
@@ -95,7 +95,7 @@ final class FramedBackground {
     }
 
     /** Keep only the newest MAX_FILES baked backgrounds. */
-    private static void trim(Context context, File keep) {
+    static void trim(Context context, File keep) {
         File[] files = dir(context).listFiles();
         if (files == null || files.length <= MAX_FILES) {
             return;

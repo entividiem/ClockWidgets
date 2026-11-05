@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="5"
         android:targetSdkVersion="26"
         tools:overrideLibrary="android.support.v7.appcompat, android.support.v4, android.support.mediacompat, android.support.graphics.drawable, android.support.fragment, android.support.coreutils, android.support.coreui, android.support.compat, android.arch.lifecycle" />
 
@@ -49,7 +49,7 @@
                 android:resource="@xml/widget_info_2x2" />
         </receiver>
 
-        <!-- ============ Weather Clock widgets (Pirate Weather) ============ -->
+        <!-- ============ Weather Clock widgets (Open-Meteo) ============ -->
 
         <!-- HTC Sense style 4x1. Also the shared receiver for refresh / per-minute tick. -->
         <receiver android:name=".weather.WeatherWidgetProvider" android:label="@string/widget_htc_name" android:exported="true">
@@ -102,6 +102,54 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/weather_widget_info_chronus" />
+        </receiver>
+
+        <!-- Galaxy S (TouchWiz 3.0) AccuWeather analog clock, as a normal 4x3 widget -->
+        <receiver android:name=".weather.GalaxySWidgetProvider" android:label="@string/widget_galaxys_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_galaxys" />
+        </receiver>
+
+        <!-- Sony Ericsson Xperia (2011) Home weather widget, as a normal 2x3 widget -->
+        <receiver android:name=".weather.XperiaWidgetProvider" android:label="@string/widget_xperia_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_xperia" />
+        </receiver>
+
+        <!-- LG Optimus (2012) weather widgets: 4x2 / 4x1 clock + weather, 2x2 weather -->
+        <receiver android:name=".weather.Lg4x2WidgetProvider" android:label="@string/widget_lg_4x2_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_lg_4x2" />
+        </receiver>
+
+        <receiver android:name=".weather.Lg4x1WidgetProvider" android:label="@string/widget_lg_4x1_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_lg_4x1" />
+        </receiver>
+
+        <receiver android:name=".weather.Lg2x2WidgetProvider" android:label="@string/widget_lg_2x2_name" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info_lg_2x2" />
         </receiver>
 
         <!-- serves the pre-baked rounded/shadowed S3 backgrounds to the launcher -->
